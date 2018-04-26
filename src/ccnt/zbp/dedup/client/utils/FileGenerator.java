@@ -13,7 +13,7 @@ public class FileGenerator {
 	}
 	
 	public static void create(File file, long length) throws IOException{  
-        long start = System.currentTimeMillis();  
+        //long start = System.currentTimeMillis();  
         RandomAccessFile r = null;  
         try {  
             r = new RandomAccessFile(file, "rw");  
@@ -27,7 +27,7 @@ public class FileGenerator {
                 }  
             }  
         }  
-        long end = System.currentTimeMillis();  
+        //long end = System.currentTimeMillis();  
         //System.out.println(end-start);  
           
     } 

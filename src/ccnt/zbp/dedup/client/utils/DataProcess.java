@@ -11,15 +11,15 @@ public class DataProcess {
 	public static long count = 0;
 
 	public static void main(String[] args) {
-		//String dataDir = "/home/ubuntu/Desktop/mec-data/data-file";
-		String dataDir = "C:/Users/zbp/Desktop/mec-data/web-vm/data-file";
+		String dataDir = "/media/ubuntu/mec-data";
+//		String dataDir = "C:/Users/zbp/Desktop/mec-data/web-vm/data-file";
 		//DataProcess.extractFileTrace(dataDir);
 		DataProcess.createAllFile(dataDir);
 	}
 	private static void createAllFile(String dataDir) {
 		init(dataDir);
 		
-		File dir = new File(dataDir);
+		File dir = new File(dataDir+File.separator+"data-file");
 		File[] files =dir.listFiles();
 		for(File file:files){
 			System.out.println(file.getAbsolutePath());
@@ -38,7 +38,7 @@ public class DataProcess {
 				String ts = "00" + fTimestamp;
 				
 				String newFilePath = file.getParentFile().getParent()+File.separator+"filestore"+File.separator+ts.substring(ts.length()-3)+File.separator+fTimestamp;
-				System.out.println(count++ + "  " + newFilePath);
+				//System.out.println(count++ + "  " + newFilePath);
 				try {
 					//count = count +fSize;
 					//System.out.println(count);

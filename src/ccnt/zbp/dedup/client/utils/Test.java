@@ -7,7 +7,9 @@ public class Test {
 		System.out.println(str.length());
 //		System.out.println(str.substring(str.length()-3));
 //		HttpClientUtil.doPost("http://127.0.0.1:8080/DedupServer/user/request", "C:/Users/zbp/Desktop", "tmp-2.txt");
-		System.out.println(1.5/21);
+		for(long i = 0; i<10; i++){
+			System.out.println((int)(i%3));
+		}
 	}
 
 }

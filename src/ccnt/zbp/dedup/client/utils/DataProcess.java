@@ -40,9 +40,9 @@ public class DataProcess {
 				String newFilePath = file.getParentFile().getParent()+File.separator+"filestore"+File.separator+ts.substring(ts.length()-3)+File.separator+fTimestamp;
 				//System.out.println(count++ + "  " + newFilePath);
 				try {
-					//count = count +fSize;
-					//System.out.println(count);
-					FileGenerator.create(new File(newFilePath), fSize*512);
+					count = count +fSize;
+					System.out.println(count);
+					//FileGenerator.create(new File(newFilePath), fSize*512);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -55,7 +55,7 @@ public class DataProcess {
 	//生成1000个文件夹 000-999
 	private static void init(String dataDir) {
 		File dir = new File(dataDir);
-		File filestoreDir = new File(dir.getParent()+File.separator+"filestore");
+		File filestoreDir = new File(dir+File.separator+"filestore");
 		if(!filestoreDir.exists()){
 			filestoreDir.mkdir();
 		}

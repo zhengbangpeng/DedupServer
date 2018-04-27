@@ -10,6 +10,9 @@ public class Test {
 		for(long i = 0; i<10; i++){
 			System.out.println((int)(i%3));
 		}
+		
+		long now = 100;
+		System.out.println(100/21.0);
 	}
 
 }

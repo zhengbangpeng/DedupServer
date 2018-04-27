@@ -33,7 +33,8 @@ public class FileClient {
 			
 		});
 		long start = System.nanoTime();
-		String[] ips = new String[]{"192.168.1.131","192.168.1.132","192.168.1.144"};
+		//String[] ips = new String[]{"192.168.1.131","192.168.1.132","192.168.1.144"};
+		String serverIp = "192.168.1.65";
 		for(String n : names){
 			try (BufferedReader br = new BufferedReader(new FileReader(dataDir+File.separator+n))) {
 			    String line;
@@ -45,13 +46,13 @@ public class FileClient {
 			    	int fSize = Integer.parseInt(row[1]);
 			    	String WoR = row[2];
 			    	
-			    	String serverIp = ips[(int) (timestamp%3)];
+			    	//String serverIp = ips[(int) (timestamp%3)];
 			    	
 			    	while(true){
-			    		long now = System.nanoTime();
-			    		if((now - start)/21 > timestamp){
+			    		long now = (System.nanoTime()-start)/21;
+			    		if(now > timestamp){
 			    			HttpClientUtil.doPost("http://"+serverIp+":8080/DedupServer/user/request", dataDir, fileNmae);
-			    			System.out.println("sendRequest: "+line);
+			    			System.out.println("time:  "+now+"sendRequest:  "+line);
 			    			break;
 			    		}
 			    	}

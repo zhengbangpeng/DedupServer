@@ -39,7 +39,9 @@ public class HttpClientUtil {
 
 	public static String doPost(String url,String dataDir, String fileName) {
 	
-		String filePath = new File(dataDir).getParent()+File.separator+"filestore"+File.separator+fileName; 
+		String ts = "00" + fileName;
+		
+		String filePath = new File(dataDir).getParent()+File.separator+"filestore"+File.separator+ts.substring(ts.length()-3)+File.separator+fileName; 
 		//String filePath = "C:/Users/zbp/Desktop/filestore/tmp-2.txt"; 
 		HttpEntity entity = MultipartEntityBuilder.create()
 			.setMode(HttpMultipartMode.BROWSER_COMPATIBLE)

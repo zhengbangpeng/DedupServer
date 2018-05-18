@@ -23,7 +23,7 @@
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>ChunkRequest</servlet-name>
-    <url-pattern>/file/request</url-pattern>
+    <url-pattern>/chunk/request</url-pattern>
   </servlet-mapping>
 
 </web-app>

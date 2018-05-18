@@ -1,11 +1,16 @@
 package ccnt.zbp.dedup.client.utils;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.*;
+import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
@@ -28,46 +33,179 @@ import redis.clients.jedis.Jedis;
 @MultipartConfig
 public class FileRequest extends HttpServlet {
 	static String dataDir = "/media/ubuntu/mec-data";
-	static Jedis jedis = RedisUtil.getJedis();
+	static String chunkDir = "/media/ubuntu/mec-data/chunkstore";
+	static Jedis remoteJedis = RedisUtil.getJedis();
+	static Jedis localJedis = LocalRedisUtil.getJedis();
+	static Jedis chunkJedis = ChunkRedisUtil.getJedis();
+	
+	//serviceId 0 1 2
+	static String[] ips = new String[]{"192.168.1.131","192.168.1.132","192.168.1.144"};
+	
+	static String tmpDir = "/media/ubuntu/tmp";
+	
+	static String newLine = System.getProperty("line.separator");
+	static String serverId = "0";
+
 	public FileRequest() {
-        super();
-    }
+		super();
+	}
 
-    public void destroy() {
-        super.destroy(); 
-    }
+	public void destroy() {
+		super.destroy();
+	}
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response){
-    	
-    }
-    //store file
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
-    	
-//    	String[] ips = new String[]{"192.168.1.131","192.168.1.132","192.168.1.144"};
-//    	System.out.println(request.getParts().size());
-    	Part part = new ArrayList<Part>(request.getParts()).get(0);
-    	String fileName = part.getName();
-    	
-    	System.out.println("get file:  "+fileName);
-    	
-//    	String serverIp = ips[(int) (Long.parseLong(fileName)%3)];
-    	
-    	//InputStream in = part.getInputStream();
-    	
-    	//获取文件hash
-    	//String fHash = jedis.get(fileName);
-    	
-//    	FileOutputStream out = new FileOutputStream(new File("C:/Users/zbp/Desktop/tmp-3.txt"));
-//    	BufferedOutputStream buff = new BufferedOutputStream(out);
-//    	
-//    	byte[] buffer = new byte[1024*4];
-//    	int bytesRead = -1;
-//    	while ((bytesRead = in.read(buffer)) != -1) {
-//			buff.write(buffer, 0, bytesRead);
-//		}
-//    	buff.flush();
-//    	buff.close();
-    	System.out.println("success");
-    	
-    }
+	public void doGet(HttpServletRequest request, HttpServletResponse response) {
+
+	}
+
+	// write or read file
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ServletException {
+
+		String WoR = request.getParameter("WoR");
+		String fileName = request.getParameter("fileName");
+		if (WoR.equals("R")) {
+			// read file
+			String metaFilePath = localJedis.get(fileName);
+			File file = readFileFromMetaFile(metaFilePath,fileName);
+
+			// String filePath = "C:/Users/zbp/Desktop/mec-data/test.txt";
+			// File file = new File(filePath);
+
+			OutputStream outStream = null;
+			FileInputStream inputStream = null;
+			outStream = response.getOutputStream();
+			inputStream = new FileInputStream(file);
+			byte[] buffer = new byte[4 * 1024];
+			int bytesRead = -1;
+			while ((bytesRead = inputStream.read(buffer)) != -1) {
+				outStream.write(buffer, 0, bytesRead);
+			}
+			inputStream.close();
+			outStream.flush();
+			outStream.close();
+			return;
+		} else {
+			// write file
+			Part part = new ArrayList<Part>(request.getParts()).get(0);
+			System.out.println("get file:  " + fileName);
+
+			// metadata file path
+			String ts = "00" + fileName;
+			String metaFilePath = dataDir + File.separator + "metastore"
+					+ File.separator + ts.substring(ts.length() - 3)
+					+ File.separator + fileName;
+
+			// get file hash from remote jedis
+			String fLongHash = remoteJedis.get(fileName);
+
+			MessageDigest md5 = null;
+			try {
+				md5 = MessageDigest.getInstance("MD5");
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+			}
+			String fShortHash = (new HexBinaryAdapter()).marshal(md5
+					.digest(fLongHash.getBytes()));
+			// compare with local jedis
+			// if file exist
+			if (localJedis.exists(fShortHash)) {
+				String existfilePath = localJedis.get(fShortHash);
+				localJedis.set(fileName, existfilePath);
+			} else {
+				// store file
+				dedupFileByChunk(part, metaFilePath,fLongHash);
+				localJedis.set(fileName, metaFilePath);
+				localJedis.set(fShortHash, metaFilePath);
+			}
+		}
+	}
+
+	private void dedupFileByChunk(Part part, String metaFilePath, String fLongHash) throws FileNotFoundException, IOException {
+		
+		int partCounter = 0;
+
+		int sizeOfFiles = 4 * 1024;// 4k chunk
+		byte[] buffer = new byte[sizeOfFiles];
+
+		String[] chunkHash = fLongHash.split(";");
+		
+		FileOutputStream mout = new FileOutputStream(metaFilePath);
+
+		// try-with-resources to ensure closing stream
+		try (BufferedInputStream bis = new BufferedInputStream(part.getInputStream())) {
+
+			int bytesAmount = 0;
+			while ((bytesAmount = bis.read(buffer)) > 0) {
+				//partName = partHash (32 Bytes)
+				String partHash = chunkHash[partCounter];
+				partCounter++;
+				// if chunk exists
+				if(chunkJedis.exists(partHash)) {
+					mout.write((partHash+" "+serverId).getBytes());
+					mout.write(newLine.getBytes());
+					continue;
+				}else{
+					String partPath = chunkDir+File.separator+partHash.substring(0, 3)+File.separator+partHash;
+					chunkJedis.set(partHash, partPath);
+					
+					mout.write((partHash+" "+serverId).getBytes());
+					mout.write(newLine.getBytes());
+					
+					try (FileOutputStream out = new FileOutputStream(partPath)) {
+						out.write(buffer, 0, bytesAmount);
+					}
+				}
+			}
+		}
+
+	}
+
+	private File readFileFromMetaFile(String metaFilePath, String fileName) throws IOException {
+		try (BufferedReader br = new BufferedReader(new FileReader(metaFilePath));
+				FileOutputStream fos = new FileOutputStream(tmpDir+File.separator+fileName);
+                BufferedOutputStream mergingStream = new BufferedOutputStream(fos)) {
+			
+                String line = br.readLine();
+                String[] array = line.split(" ");
+                String partHash = array[0];
+                String partServerId = array[1];
+                if(partServerId.equals(serverId)){
+                	Files.copy(Paths.get(chunkJedis.get(partHash)), mergingStream);
+                }else{
+                	String ip = ips[Integer.parseInt(partServerId)];
+                	InputStream in = readChunkFileFromServer(ip,partHash);
+                	
+                	//write chunk
+                	byte[] buffer = new byte[1024*4];
+        	    	int bytesRead = -1;
+        	    	while ((bytesRead = in.read(buffer)) != -1) {
+        	    		mergingStream.write(buffer, 0, bytesRead);
+        			}
+                }
+                
+		}
+		return null;
+	}
+
+	private InputStream readChunkFileFromServer(String ip, String partHash) {
+		String url = "http://"+ip+":8080/DedupServer/chunk/request";
+		//read file
+	    HttpUriRequest dRequest = RequestBuilder
+                .post(url)
+                .addParameter("chunkHash", partHash)
+                .build();
+
+	    HttpClient client = HttpClientBuilder.create().build();
+	    HttpResponse dResponse = null;
+	    InputStream in = null;
+		try {
+			dResponse = client.execute(dRequest);
+			HttpEntity entity = dResponse.getEntity();
+			in = entity.getContent();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		return in;
+	}
 }

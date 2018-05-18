@@ -45,13 +45,15 @@ public class FileClient {
 			    	String fileNmae = row[0];
 			    	int fSize = Integer.parseInt(row[1]);
 			    	String WoR = row[2];
-			    	
+			    	if(WoR == "W"){
+			    		continue;
+			    	}
 			    	//String serverIp = ips[(int) (timestamp%3)];
 			    	
 			    	while(true){
 			    		long now = (System.nanoTime()-start)/21;
 			    		if(now > timestamp){
-			    			HttpClientUtil.doPost("http://"+serverIp+":8080/DedupServer/user/request", dataDir, fileNmae);
+			    			HttpClientUtil.doPost("http://"+serverIp+":8080/DedupServer/user/request", dataDir, fileNmae,"W");
 			    			System.out.println("time:  "+now+"sendRequest:  "+line);
 			    			break;
 			    		}

@@ -1,12 +1,13 @@
 package ccnt.zbp.dedup.client.utils;
 
 import java.io.*;
+import java.nio.channels.FileChannel;
 
-public class FileGenerator {
+public class FileUtil {
 
 	public static void main(String[] args) {
 		try {
-			FileGenerator.create(new File("1.txt"), 100000*1024);
+			FileUtil.create(new File("1.txt"), 100000*1024);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -31,5 +32,18 @@ public class FileGenerator {
         //System.out.println(end-start);  
           
     } 
+	
+	public static void copyFileUsingFileChannels(File source, File dest) throws IOException {    
+        FileChannel inputChannel = null;    
+        FileChannel outputChannel = null;    
+	    try {
+	        inputChannel = new FileInputStream(source).getChannel();
+	        outputChannel = new FileOutputStream(dest).getChannel();
+	        outputChannel.transferFrom(inputChannel, 0, inputChannel.size());
+	    } finally {
+	        inputChannel.close();
+	        outputChannel.close();
+	    }
+	}
 
 }

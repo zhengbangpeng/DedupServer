@@ -14,21 +14,30 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.FormBodyPart;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
 import redis.clients.jedis.Jedis;
 
 @MultipartConfig
 public class UserRequest extends HttpServlet {
 	static String dataDir = "/media/ubuntu/mec-data";
-	static Jedis jedis = RedisUtil.getJedis();
+	static String[] ips = new String[]{"192.168.1.131","192.168.1.132","192.168.1.144"};
+	//static Jedis jedis = RedisUtil.getJedis();
 	public UserRequest() {
         super();
     }
@@ -43,50 +52,69 @@ public class UserRequest extends HttpServlet {
     // dispathch
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
     	
-    	String[] ips = new String[]{"192.168.1.131","192.168.1.132","192.168.1.144"};
-//    	System.out.println(request.getParts().size());
-    	Part part = new ArrayList<Part>(request.getParts()).get(0);
-    	String fileName = part.getName();
     	
+    	
+    	//String[] ips = new String[]{"127.0.0.1","127.0.0.1","127.0.0.1"};
+    	
+    	String fileName = request.getParameter("fileName");
     	String serverIp = ips[(int) (Long.parseLong(fileName)%3)];
-    	
-    	//InputStream in = part.getInputStream();
-    	
-    	//获取文件hash
-    	//String fHash = jedis.get(fileName);
-    	
-//    	FileOutputStream out = new FileOutputStream(new File("C:/Users/zbp/Desktop/tmp-3.txt"));
-//    	BufferedOutputStream buff = new BufferedOutputStream(out);
-//    	
-//    	byte[] buffer = new byte[1024*4];
-//    	int bytesRead = -1;
-//    	while ((bytesRead = in.read(buffer)) != -1) {
-//			buff.write(buffer, 0, bytesRead);
-//		}
-//    	buff.flush();
-//    	buff.close();
-    	
     	String url = "http://"+serverIp+":8080/DedupServer/file/request";
-    	HttpEntity entity = MultipartEntityBuilder.create()
-    			.setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
-    			.addPart((FormBodyPart) part)
-    			.build();
-
-	    HttpUriRequest dRequest = RequestBuilder
-                .post(url)
-                .setEntity(entity)
-                .build();
-
-	    HttpClient client = HttpClientBuilder.create().build();
-	    HttpResponse dResponse = null;
-		try {
-			dResponse = client.execute(dRequest);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
-        System.out.println(dResponse.toString());
     	
-    	System.out.println("success");
+    	String WoR = request.getParameter("WoR");
+    	
+    	if(WoR.equals("W")){
+    		Part part = new ArrayList<Part>(request.getParts()).get(0);
+        	
+        	HttpEntity entity = MultipartEntityBuilder.create()
+        			.setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+        			//.addPart((FormBodyPart) part)
+        			.addBinaryBody(fileName, part.getInputStream())
+        			.build();
+
+    	    HttpUriRequest dRequest = RequestBuilder
+                    .post(url)
+                    .setEntity(entity)
+                    .addParameter("WoR", WoR)
+                    .addParameter("fileName", fileName)
+                    .build();
+
+    	    HttpClient client = HttpClientBuilder.create().build();
+    	    HttpResponse dResponse = null;
+    		try {
+    			dResponse = client.execute(dRequest);
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		} 
+            System.out.println(dResponse.toString());
+    	}else{
+    		//read file
+    	    HttpUriRequest dRequest = RequestBuilder
+                    .post(url)
+                    .addParameter("fileName", fileName)
+                    .addParameter("WoR",WoR)
+                    .build();
+
+    	    HttpClient client = HttpClientBuilder.create().build();
+    	    HttpResponse dResponse = null;
+    		try {
+    			dResponse = client.execute(dRequest);
+    			HttpEntity entity = dResponse.getEntity();
+    			InputStream in = entity.getContent();
+    			OutputStream out = response.getOutputStream();
+    	    	BufferedOutputStream buff = new BufferedOutputStream(out);
+    	    	
+    	    	byte[] buffer = new byte[1024*4];
+    	    	int bytesRead = -1;
+    	    	while ((bytesRead = in.read(buffer)) != -1) {
+    				buff.write(buffer, 0, bytesRead);
+    			}
+    	    	buff.flush();
+    	    	buff.close();
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		} 
+            System.out.println(dResponse.toString());
+    	}
     	
     }
 }

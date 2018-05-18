@@ -1,8 +1,12 @@
 package ccnt.zbp.dedup.client.utils;
 
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +39,53 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-public class HttpClientUtil {
+import com.sun.xml.internal.ws.util.StreamUtils;
 
-	public static String doPost(String url,String dataDir, String fileName) {
+public class HttpClientUtil {
+	
+	public static void doPost(String url, String dataDir, String fileNmae,
+			String WoR) {
+		if(WoR.equals("R")){
+			doPostR(url,dataDir,fileNmae);
+		}else{
+			doPostW(url,dataDir,fileNmae);
+		}
+		
+	}
+
+	public static String doPostR(String url,String dataDir, String fileName) {
+		
+	    HttpUriRequest request = RequestBuilder
+                .post(url)
+                .addParameter("WoR", "R")
+                .addParameter("fileName",fileName)
+                .build();
+
+	    HttpClient client = HttpClientBuilder.create().build();
+	    HttpResponse response = null;
+		try {
+			response = client.execute(request);
+			
+			HttpEntity entity = response.getEntity();
+			InputStream in = entity.getContent();
+	    	FileOutputStream out = new FileOutputStream(new File("C:/Users/zbp/Desktop/mec-data/copy.txt"));
+	    	BufferedOutputStream buff = new BufferedOutputStream(out);
+	    	
+	    	byte[] buffer = new byte[1024*4];
+	    	int bytesRead = -1;
+	    	while ((bytesRead = in.read(buffer)) != -1) {
+				buff.write(buffer, 0, bytesRead);
+			}
+	    	buff.flush();
+	    	buff.close();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+        return response.toString();
+	}
+
+	public static String doPostW(String url,String dataDir, String fileName) {
 	
 		String ts = "00" + fileName;
 		
@@ -51,6 +99,8 @@ public class HttpClientUtil {
 	    HttpUriRequest request = RequestBuilder
                 .post(url)
                 .setEntity(entity)
+                .addParameter("WoR", "W")
+                .addParameter("fileName",fileName)
                 .build();
 
 	    HttpClient client = HttpClientBuilder.create().build();
@@ -292,4 +342,6 @@ public class HttpClientUtil {
 
         return resultString;
     }
+
+	
 }

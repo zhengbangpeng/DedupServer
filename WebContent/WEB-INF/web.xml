@@ -8,6 +8,10 @@
     <servlet-name>FileRequest</servlet-name>
     <servlet-class>ccnt.zbp.dedup.client.utils.FileRequest</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>ChunkRequest</servlet-name>
+    <servlet-class>ccnt.zbp.dedup.client.utils.ChunkRequest</servlet-class>
+  </servlet>
 
   <servlet-mapping>
     <servlet-name>UserRequest</servlet-name>
@@ -15,6 +19,10 @@
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>FileRequest</servlet-name>
+    <url-pattern>/file/request</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ChunkRequest</servlet-name>
     <url-pattern>/file/request</url-pattern>
   </servlet-mapping>
 

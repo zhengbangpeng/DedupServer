@@ -8,10 +8,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class FileClient {
+public class FileAllClient {
 	public static void main(String[] args) {
 		String dataDir = "/media/ubuntu/mec-data/data-file";
-		FileClient.start(dataDir);
+		FileAllClient.start(dataDir);
 	}
 
 	private static void start(String dataDir) {
@@ -50,18 +50,27 @@ public class FileClient {
 			    	int fSize = Integer.parseInt(row[1]);
 			    	String WoR = row[2];
 			    	if(WoR.equals("W")){
-			    		continue;
-			    	}
-			    	//String serverIp = ips[(int) (timestamp%3)];
-			    	
-			    	while(true){
-			    		// expriment data 21 days to /84 = 6 hours
-			    		long now = (System.nanoTime()-start)/84;
-			    		if(now > timestamp){
-			    			HttpClientUtil.doPost("http://"+serverIp+":8080/DedupServer/user/request", dataDir, fileNmae,"W");
-			    			System.out.println("time:  "+now+"  sendRequest:  "+line);
-			    			break;
-			    		}
+			    		while(true){
+				    		// expriment data 21 days to /84 = 6 hours
+				    		long now = (System.nanoTime()-start)*84;
+				    		if(now > timestamp){
+				    			System.out.println("start time:  "+now+"  sendRequest:  "+line);
+				    			HttpClientUtil.doPost("http://"+serverIp+":8080/DedupServer/user/request", dataDir, fileNmae,"W");
+				    			System.out.println("finish time:  "+now+"  sendRequest:  "+line);
+				    			break;
+				    		}
+				    	};
+			    	}else{
+			    		while(true){
+				    		// expriment data 21 days to /84 = 6 hours
+				    		long now = (System.nanoTime()-start)*84;
+				    		if(now > timestamp){
+				    			System.out.println("start time:  "+now+"  sendRequest:  "+line);
+				    			HttpClientUtil.doPost("http://"+serverIp+":8080/DedupServer/edge/request", dataDir, fileNmae,"R");
+				    			System.out.println("finish time:  "+now+"  sendRequest:  "+line);
+				    			break;
+				    		}
+				    	};
 			    	}
 			    }
 			}catch(Exception e){

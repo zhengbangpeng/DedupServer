@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Set;
 
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
@@ -28,8 +29,21 @@ public class TestT {
 //			System.out.print("'"+c+"',");
 //		}
 		
-		String str = "abcdef";
-		System.out.println(str.substring(0,3));
+/*		String str = "abcdef";
+		System.out.println(str.substring(0,3));*/
+		
+//		DataHelper.getChunkSet().add("aaa");
+//		DataHelper.getChunkSet().add("bbb");
+//		
+//		System.out.println(DataHelper.getChunkSet().size());
+//		
+//		Set<String> set = DataHelper.getChunkSet();
+//		set.clear();
+//		System.out.println(DataHelper.getChunkSet().size());
+		long size = 100000l;
+		int init = (int) (size * 3 / 32);
+		System.out.println(init);
+		
 	}
 
 }

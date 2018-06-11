@@ -12,6 +12,14 @@
     <servlet-name>ChunkRequest</servlet-name>
     <servlet-class>ccnt.zbp.dedup.client.utils.ChunkRequest</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>EdgeRequest</servlet-name>
+    <servlet-class>ccnt.zbp.dedup.client.utils.EdgeRequest</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>OfflineRequest</servlet-name>
+    <servlet-class>ccnt.zbp.dedup.client.utils.OfflineRequest</servlet-class>
+  </servlet>
 
   <servlet-mapping>
     <servlet-name>UserRequest</servlet-name>
@@ -24,6 +32,14 @@
   <servlet-mapping>
     <servlet-name>ChunkRequest</servlet-name>
     <url-pattern>/chunk/request</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>EdgeRequest</servlet-name>
+    <url-pattern>/edge/request</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>OfflineRequest</servlet-name>
+    <url-pattern>/offline/request</url-pattern>
   </servlet-mapping>
 
 </web-app>

@@ -113,6 +113,8 @@ public class FileRequest extends HttpServlet {
 				String existfilePath = localJedis.get(fShortHash);
 				localJedis.set(fileName, existfilePath);
 			} else {
+				//add file to the fileset
+				//DataHelper.getFileSet().add(fileName);
 				// store file
 				dedupFileByChunk(part, metaFilePath,fLongHash);
 				localJedis.set(fileName, metaFilePath);
@@ -142,14 +144,20 @@ public class FileRequest extends HttpServlet {
 				partCounter++;
 				// if chunk exists
 				if(chunkJedis.exists(partHash)) {
-					mout.write((partHash+" "+serverId).getBytes());
+					//mout.write((partHash+" "+serverId).getBytes());
+					mout.write((partHash).getBytes());
 					mout.write(newLine.getBytes());
 					continue;
 				}else{
 					String partPath = chunkDir+File.separator+partHash.substring(0, 3)+File.separator+partHash;
-					chunkJedis.set(partHash, partPath);
+					//chunkJedis.set(partHash, partPath);
+					chunkJedis.set(partHash, serverId);
 					
-					mout.write((partHash+" "+serverId).getBytes());
+					// store new chunk
+					DataHelper.getChunkSet().add(partHash);
+					
+					//mout.write((partHash+" "+serverId).getBytes());
+					mout.write((partHash).getBytes());
 					mout.write(newLine.getBytes());
 					
 					try (FileOutputStream out = new FileOutputStream(partPath)) {
@@ -167,11 +175,13 @@ public class FileRequest extends HttpServlet {
                 BufferedOutputStream mergingStream = new BufferedOutputStream(fos)) {
 			
                 String line = br.readLine();
-                String[] array = line.split(" ");
-                String partHash = array[0];
-                String partServerId = array[1];
+                //String[] array = line.split(" ");
+                //String partHash = array[0];
+                String partHash = line;
+                //String partServerId = array[1];
+                String partServerId = chunkJedis.get(partHash);
                 if(partServerId.equals(serverId)){
-                	Files.copy(Paths.get(chunkJedis.get(partHash)), mergingStream);
+                	Files.copy(Paths.get(chunkDir+File.separator+partHash.substring(0, 3)+File.separator+partHash), mergingStream);
                 }else{
                 	String ip = ips[Integer.parseInt(partServerId)];
                 	InputStream in = readChunkFileFromServer(ip,partHash);

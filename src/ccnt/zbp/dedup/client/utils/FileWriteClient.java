@@ -8,10 +8,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class FileClient {
+public class FileWriteClient {
 	public static void main(String[] args) {
 		String dataDir = "/media/ubuntu/mec-data/data-file";
-		FileClient.start(dataDir);
+		FileWriteClient.start(dataDir);
 	}
 
 	private static void start(String dataDir) {

@@ -37,7 +37,7 @@ import redis.clients.jedis.Jedis;
 public class ChunkRequest extends HttpServlet {
 	static String dataDir = "/media/ubuntu/mec-data";
 	static String[] ips = new String[]{"192.168.1.131","192.168.1.132","192.168.1.144"};
-	
+	static String chunkDir = "/media/ubuntu/mec-data/chunkstore";
 	static Jedis chunkJedis = ChunkRedisUtil.getJedis();
 	//static Jedis jedis = RedisUtil.getJedis();
 	public ChunkRequest() {
@@ -57,7 +57,7 @@ public class ChunkRequest extends HttpServlet {
     	//String[] ips = new String[]{"127.0.0.1","127.0.0.1","127.0.0.1"};
     	
     	String chunkHash = request.getParameter("chunkHash");
-    	String chunkPath = chunkJedis.get(chunkHash);
+    	String chunkPath = chunkDir+File.separator+chunkHash.substring(0, 3)+File.separator+chunkHash;
     	
     	File chunkFile = new File(chunkPath);
     	FileInputStream fis = new FileInputStream(chunkFile);

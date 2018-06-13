@@ -53,12 +53,20 @@ public class UserRequest extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
     	
     	
-    	
+    	// simulate remote call
+    	// 20 ms average
+    	try {
+			Thread.sleep(20);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
     	//String[] ips = new String[]{"127.0.0.1","127.0.0.1","127.0.0.1"};
     	
     	String fileName = request.getParameter("fileName");
     	String serverIp = ips[(int) (Long.parseLong(fileName)%3)];
     	String url = "http://"+serverIp+":8080/DedupServer/file/request";
+    	String fileHash = request.getParameter("fileHash");
     	
     	String WoR = request.getParameter("WoR");
     	
@@ -76,6 +84,7 @@ public class UserRequest extends HttpServlet {
                     .setEntity(entity)
                     .addParameter("WoR", WoR)
                     .addParameter("fileName", fileName)
+                    .addParameter("fileHash", fileHash)
                     .build();
 
     	    HttpClient client = HttpClientBuilder.create().build();
@@ -92,6 +101,7 @@ public class UserRequest extends HttpServlet {
                     .post(url)
                     .addParameter("fileName", fileName)
                     .addParameter("WoR",WoR)
+                    .addParameter("fileHash", fileHash)
                     .build();
 
     	    HttpClient client = HttpClientBuilder.create().build();

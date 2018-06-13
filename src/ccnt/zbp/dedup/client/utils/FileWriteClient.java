@@ -3,12 +3,21 @@ package ccnt.zbp.dedup.client.utils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
+
+import redis.clients.jedis.Jedis;
+
 public class FileWriteClient {
+	
+	static Jedis localJedis = LocalRedisUtil.getJedis();
+	
 	public static void main(String[] args) {
 		String dataDir = "/media/ubuntu/mec-data/data-file";
 		FileWriteClient.start(dataDir);
@@ -52,14 +61,29 @@ public class FileWriteClient {
 			    	if(WoR.equals("W")){
 			    		continue;
 			    	}
+			    	
+			    	String fLongHash = localJedis.get(fileNmae);
+			    	
+			    	MessageDigest md5 = null;
+					try {
+						md5 = MessageDigest.getInstance("MD5");
+					} catch (NoSuchAlgorithmException e) {
+						e.printStackTrace();
+					}
+					String fShortHash = (new HexBinaryAdapter()).marshal(md5
+							.digest(fLongHash.getBytes()));
+			    	
 			    	//String serverIp = ips[(int) (timestamp%3)];
 			    	
 			    	while(true){
 			    		// expriment data 21 days to /84 = 6 hours
 			    		long now = (System.nanoTime()-start)/84;
 			    		if(now > timestamp){
-			    			HttpClientUtil.doPost("http://"+serverIp+":8080/DedupServer/user/request", dataDir, fileNmae,"W");
-			    			System.out.println("time:  "+now+"  sendRequest:  "+line);
+			    			long requestStart = System.nanoTime();
+			    			HttpClientUtil.doPost("http://"+serverIp+":8080/DedupServer/user/request", dataDir, fileNmae,fShortHash,"W");
+			    			// time ns -> ms
+			    			double requestTime = (System.nanoTime()-requestStart)/1000000.0;
+			    			System.out.println("finish time: "+String.format("%.1f", requestTime)+" sendRequest: "+line);
 			    			break;
 			    		}
 			    	}

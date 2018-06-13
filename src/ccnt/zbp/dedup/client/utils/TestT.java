@@ -40,9 +40,11 @@ public class TestT {
 //		Set<String> set = DataHelper.getChunkSet();
 //		set.clear();
 //		System.out.println(DataHelper.getChunkSet().size());
-		long size = 100000l;
+/*		long size = 100000l;
 		int init = (int) (size * 3 / 32);
-		System.out.println(init);
+		System.out.println(init);*/
+		double d = 1.3643;
+		System.out.println(String.format("%.1f", d));
 		
 	}
 

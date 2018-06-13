@@ -3,12 +3,21 @@ package ccnt.zbp.dedup.client.utils;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
+
+import redis.clients.jedis.Jedis;
+
 public class FileAllClient {
+	
+	static Jedis localJedis = LocalRedisUtil.getJedis();
+	
 	public static void main(String[] args) {
 		String dataDir = "/media/ubuntu/mec-data/data-file";
 		FileAllClient.start(dataDir);
@@ -49,14 +58,28 @@ public class FileAllClient {
 			    	String fileNmae = row[0];
 			    	int fSize = Integer.parseInt(row[1]);
 			    	String WoR = row[2];
+			    	
+			    	String fLongHash = localJedis.get(fileNmae);
+			    	
+			    	MessageDigest md5 = null;
+					try {
+						md5 = MessageDigest.getInstance("MD5");
+					} catch (NoSuchAlgorithmException e) {
+						e.printStackTrace();
+					}
+					String fShortHash = (new HexBinaryAdapter()).marshal(md5
+							.digest(fLongHash.getBytes()));
+			    	
 			    	if(WoR.equals("W")){
 			    		while(true){
 				    		// expriment data 21 days to /84 = 6 hours
 				    		long now = (System.nanoTime()-start)*84;
 				    		if(now > timestamp){
-				    			System.out.println("start time:  "+now+"  sendRequest:  "+line);
-				    			HttpClientUtil.doPost("http://"+serverIp+":8080/DedupServer/user/request", dataDir, fileNmae,"W");
-				    			System.out.println("finish time:  "+now+"  sendRequest:  "+line);
+				    			long requestStart = System.nanoTime();
+				    			HttpClientUtil.doPost("http://"+serverIp+":8080/DedupServer/user/request", dataDir, fileNmae,fShortHash,"W");
+				    			// time ns -> ms
+				    			double requestTime = (System.nanoTime()-requestStart)/1000000.0;
+				    			System.out.println("finish time: "+String.format("%.1f", requestTime)+" sendRequest: "+line);
 				    			break;
 				    		}
 				    	};
@@ -65,9 +88,11 @@ public class FileAllClient {
 				    		// expriment data 21 days to /84 = 6 hours
 				    		long now = (System.nanoTime()-start)*84;
 				    		if(now > timestamp){
-				    			System.out.println("start time:  "+now+"  sendRequest:  "+line);
-				    			HttpClientUtil.doPost("http://"+serverIp+":8080/DedupServer/edge/request", dataDir, fileNmae,"R");
-				    			System.out.println("finish time:  "+now+"  sendRequest:  "+line);
+				    			long requestStart = System.nanoTime();
+				    			HttpClientUtil.doPost("http://"+serverIp+":8080/DedupServer/user/request", dataDir, fileNmae,fShortHash,"R");
+				    			// time ns -> ms
+				    			double requestTime = (System.nanoTime()-requestStart)/1000000.0;
+				    			System.out.println("finish time: "+String.format("%.1f", requestTime)+" sendRequest: "+line);
 				    			break;
 				    		}
 				    	};

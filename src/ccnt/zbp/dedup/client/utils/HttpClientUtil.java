@@ -45,22 +45,23 @@ public class HttpClientUtil {
 	
 	static String tmpDir = "/media/ubuntu/tmp";
 	
-	public static void doPost(String url, String dataDir, String fileNmae,
+	public static void doPost(String url, String dataDir, String fileNmae,String fileHash,
 			String WoR) {
 		if(WoR.equals("R")){
-			doPostR(url,dataDir,fileNmae);
+			doPostR(url,dataDir,fileNmae,fileHash);
 		}else{
-			doPostW(url,dataDir,fileNmae);
+			doPostW(url,dataDir,fileNmae,fileHash);
 		}
 		
 	}
 
-	public static String doPostR(String url,String dataDir, String fileName) {
+	public static String doPostR(String url,String dataDir, String fileName, String fileHash) {
 		
 	    HttpUriRequest request = RequestBuilder
                 .post(url)
                 .addParameter("WoR", "R")
                 .addParameter("fileName",fileName)
+                .addParameter("fileHash",fileHash)
                 .build();
 
 	    HttpClient client = HttpClientBuilder.create().build();
@@ -88,7 +89,7 @@ public class HttpClientUtil {
         return response.toString();
 	}
 
-	public static String doPostW(String url,String dataDir, String fileName) {
+	public static String doPostW(String url,String dataDir, String fileName,String fileHash) {
 	
 		String ts = "00" + fileName;
 		
@@ -104,6 +105,7 @@ public class HttpClientUtil {
                 .setEntity(entity)
                 .addParameter("WoR", "W")
                 .addParameter("fileName",fileName)
+                .addParameter("fileHash", fileHash)
                 .build();
 
 	    HttpClient client = HttpClientBuilder.create().build();
@@ -348,12 +350,12 @@ public class HttpClientUtil {
     
     public static void main(String[] args) {
     	long start = System.nanoTime();
-    	for (int i=0;i<50;i++){
-    		//doGet("http://www.baidu.com?i="+i);
-    		doGet("http://i.firefoxchina.cn/?i="+i);
+    	for (int i=0;i<100;i++){
+    		doGet("http://www.baidu.com?i="+i);
+    		//doGet("http://i.firefoxchina.cn/?i="+i);
     	}
 		long end = System.nanoTime();
-		System.out.println((end-start)/50);
+		System.out.println((end-start)/100.0/1000000.0);
 	}
 
 	

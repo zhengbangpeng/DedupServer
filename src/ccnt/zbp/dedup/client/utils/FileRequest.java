@@ -61,12 +61,15 @@ public class FileRequest extends HttpServlet {
 	// write or read file
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
-
+		
+		// 
+		
 		String WoR = request.getParameter("WoR");
 		String fileName = request.getParameter("fileName");
+		String fShortHash = request.getParameter("fileHash");
 		if (WoR.equals("R")) {
 			// read file
-			String metaFilePath = localJedis.get(fileName);
+			String metaFilePath = localJedis.get(fShortHash);
 			File file = readFileFromMetaFile(metaFilePath,fileName);
 
 			// String filePath = "C:/Users/zbp/Desktop/mec-data/test.txt";
@@ -88,30 +91,34 @@ public class FileRequest extends HttpServlet {
 		} else {
 			// write file
 			Part part = new ArrayList<Part>(request.getParts()).get(0);
-			System.out.println("get file:  " + fileName);
-
+			System.out.println("get file: " + fileName);
+			
+			
+			
 			// metadata file path
 			String ts = "00" + fileName;
 			String metaFilePath = dataDir + File.separator + "metastore"
-					+ File.separator + ts.substring(ts.length() - 3)
-					+ File.separator + fileName;
+					+ File.separator + fShortHash.substring(0,3)
+					+ File.separator + fShortHash;
 
 			// get file hash from remote jedis
 			String fLongHash = remoteJedis.get(fileName);
 
-			MessageDigest md5 = null;
+/*			MessageDigest md5 = null;
 			try {
 				md5 = MessageDigest.getInstance("MD5");
 			} catch (NoSuchAlgorithmException e) {
 				e.printStackTrace();
 			}
 			String fShortHash = (new HexBinaryAdapter()).marshal(md5
-					.digest(fLongHash.getBytes()));
+					.digest(fLongHash.getBytes()));*/
+			
 			// compare with local jedis
 			// if file exist
 			if (localJedis.exists(fShortHash)) {
-				String existfilePath = localJedis.get(fShortHash);
-				localJedis.set(fileName, existfilePath);
+				return;
+				/*String existfilePath = localJedis.get(fShortHash);
+				localJedis.set(fileName, existfilePath);*/
 			} else {
 				//add file to the fileset
 				//DataHelper.getFileSet().add(fileName);

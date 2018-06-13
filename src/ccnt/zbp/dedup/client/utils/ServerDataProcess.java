@@ -69,10 +69,21 @@ public class ServerDataProcess {
 		if(!metastoreDir.exists()){
 			metastoreDir.mkdir();
 		}
-		for(int i=0; i<10; i++){
+		/*for(int i=0; i<10; i++){
 			for(int j=0; j<10; j++){
 				for(int k=0; k<10; k++){
 					File newDir = new File(metastoreDir.getAbsolutePath()+File.separator+i+j+k);
+					if(!newDir.exists()){
+						newDir.mkdir();
+					}
+				}
+			}
+		}*/
+		
+		for(int i=0; i<36; i++){
+			for(int j=0; j<36; j++){
+				for(int k=0; k<36; k++){
+					File newDir = new File(metastoreDir.getAbsolutePath()+File.separator+carray[i]+carray[j]+carray[k]);
 					if(!newDir.exists()){
 						newDir.mkdir();
 					}

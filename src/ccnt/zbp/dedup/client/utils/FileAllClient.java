@@ -68,7 +68,7 @@ public class FileAllClient {
 						e.printStackTrace();
 					}
 					String fShortHash = (new HexBinaryAdapter()).marshal(md5
-							.digest(fLongHash.getBytes()));
+							.digest(fLongHash.getBytes())).toLowerCase();
 			    	
 			    	if(WoR.equals("W")){
 			    		while(true){

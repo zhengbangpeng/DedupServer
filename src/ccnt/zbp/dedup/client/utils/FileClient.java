@@ -71,13 +71,13 @@ public class FileClient {
 						e.printStackTrace();
 					}
 					String fShortHash = (new HexBinaryAdapter()).marshal(md5
-							.digest(fLongHash.getBytes()));
+							.digest(fLongHash.getBytes())).toLowerCase();
 			    	
 			    	//String serverIp = ips[(int) (timestamp%3)];
 			    	
 			    	while(true){
 			    		// expriment data 21 days to /84 = 6 hours
-			    		long now = (System.nanoTime()-start)/84;
+			    		long now = (System.nanoTime()-start)*84;
 			    		if(now > timestamp){
 			    			HttpClientUtil.doPost("http://"+serverIp+":8080/DedupServer/user/request", dataDir, fileNmae,fShortHash,"W");
 			    			System.out.println("time:  "+now+"  sendRequest:  "+line);

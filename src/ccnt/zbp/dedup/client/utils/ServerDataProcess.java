@@ -47,16 +47,17 @@ public class ServerDataProcess {
 	}
 	//生成1000个文件夹 000-999
 	private static void init(String dataDir) {
-		char[] carray = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
+		char[] carray = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
+				//,'f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
 		
 		File dir = new File(dataDir);
 		File chunkstoreDir = new File(dir+File.separator+"chunkstore");
 		if(!chunkstoreDir.exists()){
 			chunkstoreDir.mkdir();
 		}
-		for(int i=0; i<36; i++){
-			for(int j=0; j<36; j++){
-				for(int k=0; k<36; k++){
+		for(int i=0; i<16; i++){
+			for(int j=0; j<16; j++){
+				for(int k=0; k<16; k++){
 					File newDir = new File(chunkstoreDir.getAbsolutePath()+File.separator+carray[i]+carray[j]+carray[k]);
 					if(!newDir.exists()){
 						newDir.mkdir();
@@ -80,9 +81,9 @@ public class ServerDataProcess {
 			}
 		}*/
 		
-		for(int i=0; i<36; i++){
-			for(int j=0; j<36; j++){
-				for(int k=0; k<36; k++){
+		for(int i=0; i<16; i++){
+			for(int j=0; j<16; j++){
+				for(int k=0; k<16; k++){
 					File newDir = new File(metastoreDir.getAbsolutePath()+File.separator+carray[i]+carray[j]+carray[k]);
 					if(!newDir.exists()){
 						newDir.mkdir();

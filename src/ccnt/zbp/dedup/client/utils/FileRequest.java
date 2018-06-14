@@ -122,6 +122,7 @@ public class FileRequest extends HttpServlet {
 			} else {
 				//add file to the fileset
 				//DataHelper.getFileSet().add(fileName);
+				
 				// store file
 				dedupFileByChunk(part, metaFilePath,fLongHash);
 				localJedis.set(fileName, metaFilePath);

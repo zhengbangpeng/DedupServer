@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.Set;
 
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
@@ -45,6 +46,8 @@ public class TestT {
 		System.out.println(init);*/
 		double d = 1.3643;
 		System.out.println(String.format("%.1f", d));
+		
+		System.out.println(new Date().getTime()/1000);
 		
 	}
 

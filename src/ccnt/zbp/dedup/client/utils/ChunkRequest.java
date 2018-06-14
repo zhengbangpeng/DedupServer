@@ -55,7 +55,7 @@ public class ChunkRequest extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
     	
     	//String[] ips = new String[]{"127.0.0.1","127.0.0.1","127.0.0.1"};
-    	
+    	System.out.println("get chunk: "+new Date().getTime()/1000);
     	String chunkHash = request.getParameter("chunkHash");
     	String chunkPath = chunkDir+File.separator+chunkHash.substring(0, 3)+File.separator+chunkHash;
     	

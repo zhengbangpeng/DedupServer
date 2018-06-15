@@ -100,6 +100,11 @@ public class FileRequest extends HttpServlet {
 			String metaFilePath = dataDir + File.separator + "metastore"
 					+ File.separator + fShortHash.substring(0,3)
 					+ File.separator + fShortHash;
+			
+			File metaFile = new File(metaFilePath);
+			if(!metaFile.exists()){
+				metaFile.createNewFile();
+			}
 
 			// get file hash from remote jedis
 			String fLongHash = remoteJedis.get(fileName);

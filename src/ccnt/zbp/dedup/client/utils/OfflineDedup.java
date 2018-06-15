@@ -1,7 +1,9 @@
 package ccnt.zbp.dedup.client.utils;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -27,7 +29,7 @@ public class OfflineDedup {
 	
 	static String[] ips = new String[]{"192.168.1.131","192.168.1.132","192.168.1.144"};
 	
-	static Jedis localJedis = LocalRedisUtil.getJedis();
+	//static Jedis localJedis = LocalRedisUtil.getJedis();
 	
 	public static void main(String[] args) {
 		TimerTask task = new TimerTask() {
@@ -45,39 +47,56 @@ public class OfflineDedup {
              	    HttpResponse response = null;
              		try {
              			response = client.execute(request);
-             			HttpEntity entity = response.getEntity();
-
+             			
+             			InputStream is = new BufferedInputStream(response.getEntity().getContent());
+             			
+             			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             			org.apache.commons.io.IOUtils.copy(is, baos);
+             			byte[] bytes = baos.toByteArray();
              	    		
-             	    		for(String otherip : ips){
-             	    			if(otherip.equals(ip)){
-             	    				continue;
-             	    			}
-             	    			String otherurl = "http://"+otherip+":8080/DedupServer/offline/request";
-             	    			HttpUriRequest otherrequest = RequestBuilder
-                                        .post(otherurl)
-                                        .addParameter("method", "getchunkdiff")
-                                        .setEntity(entity)
-                                        .build();
-                 	    		HttpResponse otherresponse = client.execute(otherrequest);
-                 	    		
-                 	    		HttpEntity diffEntity = otherresponse.getEntity();
-                 	    		HttpUriRequest updateRequest = RequestBuilder
-                                        .post(url)
-                                        .addParameter("method", "updatechunk")
-                                        .setEntity(diffEntity)
-                                        .build();
-                 	    		HttpResponse diffResponse = client.execute(updateRequest);
-             	    		}
+         	    		for(String otherip : ips){
+         	    			if(otherip.equals(ip)){
+         	    				continue;
+         	    			}
+         	    			String otherurl = "http://"+otherip+":8080/DedupServer/offline/request";
+         	    			
+         	    			HttpEntity chunkset = MultipartEntityBuilder.create()
+             	           			.setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+             	           			.addBinaryBody("chunkset", bytes)
+             	           			.build();
+         	    			
+         	    			HttpUriRequest otherrequest = RequestBuilder
+                                    .post(otherurl)
+                                    .addParameter("method", "getchunkdiff")
+                                    .setEntity(chunkset)
+                                    .build();
+         	    			HttpClient otherclient = HttpClientBuilder.create().build();
+             	    		HttpResponse otherresponse = otherclient.execute(otherrequest);
+             	    		
+             	    		HttpEntity chunkdiff = MultipartEntityBuilder.create()
+             	           			.setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+             	           			.addBinaryBody("chunkdiff", otherresponse.getEntity().getContent())
+             	           			.build();
+             	    		//HttpEntity diffEntity = otherresponse.getEntity();
+             	    		HttpUriRequest updateRequest = RequestBuilder
+                                    .post(url)
+                                    .addParameter("method", "updatechunk")
+                                    .setEntity(chunkdiff)
+                                    .build();
+             	    		HttpClient diffclient = HttpClientBuilder.create().build();
+             	    		HttpResponse diffResponse = diffclient.execute(updateRequest);
+         	    		}
              		}catch(Exception e){
              			e.printStackTrace();
              		}
                 }
+                System.out.println("offline dedup finish!");
             }
-             		
+            
                 
         };
         
         Timer timer = new Timer();
-        timer.scheduleAtFixedRate(task, 1000*3600, 1000 * 3600);
+        timer.scheduleAtFixedRate(task, 1000*5, 1000 * 3600);
 	}
 }

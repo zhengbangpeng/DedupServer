@@ -54,9 +54,9 @@ public class UserRequest extends HttpServlet {
     	
     	
     	// simulate remote call
-    	// 20 ms average
+    	// 30 ms average
     	try {
-			Thread.sleep(20);
+			Thread.sleep(30);
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

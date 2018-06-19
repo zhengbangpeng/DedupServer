@@ -11,11 +11,13 @@ import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 import org.apache.commons.io.FileUtils;
 
+import redis.clients.jedis.Jedis;
+
 import com.sun.corba.se.spi.ior.MakeImmutable;
 
 public class TestT {
 
-	public static void main(String[] args) throws Exception {
+	public  static void main(String[] args) throws Exception {
 	
 //		String oriPath = "C:/Users/zbp/Desktop/test/ori.txt";
 //		String copyPath = "C:/Users/zbp/Desktop/copy.txt";
@@ -44,11 +46,30 @@ public class TestT {
 /*		long size = 100000l;
 		int init = (int) (size * 3 / 32);
 		System.out.println(init);*/
-		double d = 1.3643;
+/*		double d = 1.3643;
 		System.out.println(String.format("%.1f", d));
 		
-		System.out.println(new Date().getTime()/1000);
+		System.out.println(new Date().getTime()/1000);*/
 		
+		Jedis chunkJedis = ChunkRedisUtil.getJedis();
+		Set<String> keys = chunkJedis.keys("*");
+		int i = 0;
+		int j = 0;
+		System.out.println(keys.size());
+		for(String key : keys){
+			/*if(i > 10){
+				break;
+			}
+			i++;*/
+			String value = chunkJedis.get(key);
+			if(!value.equals("2")){
+				j++;
+			}
+			System.out.println(value);
+			
+		}
+		System.out.println("dedup count:" +j);
+		return;
 	}
 
 }

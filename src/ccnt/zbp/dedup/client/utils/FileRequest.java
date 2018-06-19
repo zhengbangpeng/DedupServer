@@ -143,7 +143,7 @@ public class FileRequest extends HttpServlet {
 		int sizeOfFiles = 4 * 1024;// 4k chunk
 		byte[] buffer = new byte[sizeOfFiles];
 
-		String[] chunkHash = fLongHash.split(";");
+		String[] chunkHash = fLongHash.split(",");
 		
 		FileOutputStream mout = new FileOutputStream(metaFilePath);
 

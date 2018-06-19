@@ -82,6 +82,10 @@ public class HttpClientUtil {
 			}
 	    	buff.flush();
 	    	buff.close();
+	    	out.close();
+	    	
+	    	File tmp = new File(tmpDir+File.separator+fileName);
+	    	tmp.delete();
 			
 		} catch (Exception e) {
 			e.printStackTrace();

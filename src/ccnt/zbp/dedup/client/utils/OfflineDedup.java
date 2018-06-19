@@ -3,6 +3,7 @@ package ccnt.zbp.dedup.client.utils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,6 +15,7 @@ import java.util.TimerTask;
 
 import javax.servlet.http.Part;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -38,7 +40,9 @@ public class OfflineDedup {
             	//get file list from servers
                 System.out.println("offline dedup");
                 for(String ip : ips){
+                	
                 	String url = "http://"+ip+":8080/DedupServer/offline/request";
+                	//System.out.println(url);
                 	HttpUriRequest request = RequestBuilder
                              .post(url)
                              .addParameter("method", "getchunkset")
@@ -48,11 +52,28 @@ public class OfflineDedup {
              		try {
              			response = client.execute(request);
              			
-             			InputStream is = new BufferedInputStream(response.getEntity().getContent());
-             			
-             			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             			InputStream stream = response.getEntity().getContent();
+             			//System.out.println(stream.toString());
+             			if (stream.markSupported() == false) {
+
+             		        // lets replace the stream object
+             		        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             		        /*IOUtils.copy(stream, baos);
+             		        stream.close();*/ 
+             		      
+	             		   byte[] buffer = new byte[1024];  
+	             		   int len;  
+	             		   while ((len = stream.read(buffer)) > -1 ) {  
+	             		       baos.write(buffer, 0, len);  
+	             		   }  
+	             		   baos.flush();  
+             		        
+             		        stream = new ByteArrayInputStream(baos.toByteArray());
+             		        // now the stream should support 'mark' and 'reset'
+             		    }
+             			/*ByteArrayOutputStream baos = new ByteArrayOutputStream();
              			org.apache.commons.io.IOUtils.copy(is, baos);
-             			byte[] bytes = baos.toByteArray();
+             			byte[] bytes = baos.toByteArray();*/
              	    		
          	    		for(String otherip : ips){
          	    			if(otherip.equals(ip)){
@@ -62,7 +83,7 @@ public class OfflineDedup {
          	    			
          	    			HttpEntity chunkset = MultipartEntityBuilder.create()
              	           			.setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
-             	           			.addBinaryBody("chunkset", bytes)
+             	           			.addBinaryBody("chunkset", stream)
              	           			.build();
          	    			
          	    			HttpUriRequest otherrequest = RequestBuilder

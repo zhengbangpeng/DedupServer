@@ -63,6 +63,8 @@ public class ServerDataProcess {
 	}
 	//生成1000个文件夹 000-999
 	private static void init(String dataDir) {
+		deleteDir(new File(dataDir));
+		
 		char[] carray = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
 				//,'f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
 		
@@ -89,16 +91,6 @@ public class ServerDataProcess {
 		if(!metastoreDir.exists()){
 			metastoreDir.mkdir();
 		}
-		/*for(int i=0; i<10; i++){
-			for(int j=0; j<10; j++){
-				for(int k=0; k<10; k++){
-					File newDir = new File(metastoreDir.getAbsolutePath()+File.separator+i+j+k);
-					if(!newDir.exists()){
-						newDir.mkdir();
-					}
-				}
-			}
-		}*/
 		
 		for(int i=0; i<16; i++){
 			for(int j=0; j<16; j++){
@@ -110,6 +102,8 @@ public class ServerDataProcess {
 				}
 			}
 		}
+		
+		System.out.println("init success!!");
 	}
 	public static void extractFileTrace(String dataDir) {  
 		File dir = new File(dataDir);

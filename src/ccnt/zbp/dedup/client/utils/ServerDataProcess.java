@@ -15,9 +15,25 @@ public class ServerDataProcess {
 //		String dataDir = "C:/Users/zbp/Desktop/mec-data/web-vm/data-file";
 		//DataProcess.extractFileTrace(dataDir);
 		ServerDataProcess.init(dataDir);
+		//deleteDir(new File("C:/Users/zbp/Desktop/testdel"));
 	}
 	private static void createAllFile(String dataDir) {
+		deleteDir(new File(dataDir));
 		init(dataDir);
+		System.out.println("init success!!");
+	}
+	private static boolean deleteDir(File dir) {
+		if (!dir.exists()) return false;
+        if (dir.isDirectory()) {
+            String[] childrens = dir.list();
+            // 递归删除目录中的子目录下
+            for (String child : childrens) {
+                boolean success = deleteDir(new File(dir, child));
+                if (!success) return false;
+            }
+        }
+        // 目录此时为空，可以删除
+        return dir.delete();
 	}
 	private static void createFile(File file) {
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
@@ -51,6 +67,9 @@ public class ServerDataProcess {
 				//,'f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
 		
 		File dir = new File(dataDir);
+		if(!dir.exists()){
+			dir.mkdir();
+		}
 		File chunkstoreDir = new File(dir+File.separator+"chunkstore");
 		if(!chunkstoreDir.exists()){
 			chunkstoreDir.mkdir();

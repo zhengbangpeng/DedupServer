@@ -42,7 +42,7 @@ public class OfflineDedup {
                 for(String ip : ips){
                 	
                 	String url = "http://"+ip+":8080/DedupServer/offline/request";
-                	//System.out.println(url);
+                	System.out.println(url);
                 	HttpUriRequest request = RequestBuilder
                              .post(url)
                              .addParameter("method", "getchunkset")

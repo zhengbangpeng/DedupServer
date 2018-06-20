@@ -10,6 +10,15 @@ import java.util.Set;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 import redis.clients.jedis.Jedis;
 
@@ -18,58 +27,34 @@ import com.sun.corba.se.spi.ior.MakeImmutable;
 public class TestT {
 
 	public  static void main(String[] args) throws Exception {
-	
-//		String oriPath = "C:/Users/zbp/Desktop/test/ori.txt";
-//		String copyPath = "C:/Users/zbp/Desktop/copy.txt";
-//		FileUtil.copyFileUsingFileChannels(new File(oriPath), new File(copyPath));
 		
-		//HttpClientUtil.doPost("http://"+"127.0.0.1"+":8080/DedupServer/user/request", "test", "123","R");
-//		char c;
-//		for(c='0' ;c<='9';c++){
-//			System.out.print("'"+c+"',");
-//		}
-//		for(c='a' ;c<='z';c++){
-//			System.out.print("'"+c+"',");
-//		}
-		
-/*		String str = "abcdef";
-		System.out.println(str.substring(0,3));*/
-		
-//		DataHelper.getChunkSet().add("aaa");
-//		DataHelper.getChunkSet().add("bbb");
-//		
-//		System.out.println(DataHelper.getChunkSet().size());
-//		
-//		Set<String> set = DataHelper.getChunkSet();
-//		set.clear();
-//		System.out.println(DataHelper.getChunkSet().size());
-/*		long size = 100000l;
-		int init = (int) (size * 3 / 32);
-		System.out.println(init);*/
-/*		double d = 1.3643;
-		System.out.println(String.format("%.1f", d));
-		
-		System.out.println(new Date().getTime()/1000);*/
-		
-		Jedis chunkJedis = ChunkRedisUtil.getJedis();
-		Set<String> keys = chunkJedis.keys("*");
-		int i = 0;
-		int j = 0;
-		System.out.println(keys.size());
-		for(String key : keys){
-			/*if(i > 10){
-				break;
-			}
-			i++;*/
-			String value = chunkJedis.get(key);
-			if(!value.equals("2")){
-				j++;
-			}
-			System.out.println(value);
-			
-		}
-		System.out.println("dedup count:" +j);
-		return;
+		String fileName = "021";
+		String url = "http://192.168.1.65:8080/DedupServer/user/request";
+		String fileHash = "021test021";
+		//String filePath = "C:/Users/zbp/Desktop/source-archive.zip"; 
+		String filePath = "C:/Users/zbp/Desktop/tmp.txt"; 
+		//String filePath = "C:/Users/zbp/Desktop/filestore/tmp-2.txt"; 
+		HttpEntity entity = MultipartEntityBuilder.create()
+			.setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+			.addBinaryBody("file", new File(filePath), ContentType.DEFAULT_BINARY, fileName)
+			.build();
+
+	    HttpUriRequest request = RequestBuilder
+                .post(url)
+                .setEntity(entity)
+                .addParameter("WoR", "W")
+                .addParameter("fileName",fileName)
+                .addParameter("fileHash", fileHash)
+                .build();
+
+	    HttpClient client = HttpClientBuilder.create().build();
+	    HttpResponse response = null;
+		try {
+			response = client.execute(request);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+        System.out.println(response.toString());
 	}
 
 }

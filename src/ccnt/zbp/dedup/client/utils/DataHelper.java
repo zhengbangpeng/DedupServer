@@ -11,18 +11,18 @@ public class DataHelper {
 	
 	static String dataDir = "/media/ubuntu/mec-data";
 	
-	public static Set<String> FileSet = Collections.synchronizedSet(new HashSet<String>());
-	//public static Set<String> FileSet = ConcurrentHashMap.newKeySet();
+	//public static Set<String> FileSet = Collections.synchronizedSet(new HashSet<String>());
+	public static Set<String> FileSet = ConcurrentHashMap.newKeySet();
 	
 	
-	public static Set<String> ChunkSet = Collections.synchronizedSet(new HashSet<String>());
+	//public static Set<String> ChunkSet = Collections.synchronizedSet(new HashSet<String>());
 	
-	//public static Set<String> ChunkSet = ConcurrentHashMap.newKeySet();
+	public static Set<String> ChunkSet = ConcurrentHashMap.newKeySet();
 	//public static Set<String> ChunkSet = new ConcurrentHashSet<>();
 	
 	//chunk changed in this cycle
-	public static Set<String> ChangedSet = Collections.synchronizedSet(new HashSet<String>());
-	//public static Set<String> ChangedSet = ConcurrentHashMap.newKeySet();
+	//public static Set<String> ChangedSet = Collections.synchronizedSet(new HashSet<String>());
+	public static Set<String> ChangedSet = ConcurrentHashMap.newKeySet();
 	
 	//param size
 	//public static Map<String, String> fileCache = new FileLRU<>(5);

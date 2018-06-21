@@ -28,8 +28,9 @@ public class TestC {
 //			System.out.print("'"+c+"',");
 //		}
 		
-		String str = "abcdef";
-		System.out.println(str.substring(0,3));
+		/*String str = "abcdef";
+		System.out.println(str.substring(0,3));*/
+		System.out.println(Math.random());
 	}
 
 }

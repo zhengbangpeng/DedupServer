@@ -65,14 +65,21 @@ public class OfflineRequest extends HttpServlet {
 		String method = request.getParameter("method");
 		if (method.equals("getchunkset")) {
 			// get new chunk set 
-			Set<String> set = DataHelper.getChunkSet();
+//			Set<String> set = DataHelper.getChunkSet();
 			PrintWriter pw = response.getWriter();
-			for (String chunk : set){
+			Iterator<String> it = DataHelper.getChunkSet().iterator();
+//			for (String chunk : set){
+//				pw.write(chunk+" "+chunkJedis.get(chunk));
+//				pw.write(newLine);
+//			}
+			while(it.hasNext()){
+				String chunk = it.next();
 				pw.write(chunk+" "+chunkJedis.get(chunk));
 				pw.write(newLine);
+				it.remove();
 			}
 			pw.flush();
-			set.clear();
+//			set.clear();
 			return;
 		} else if(method.equals("getchunkdiff")){
 			

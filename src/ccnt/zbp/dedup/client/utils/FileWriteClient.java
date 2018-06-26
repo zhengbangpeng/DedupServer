@@ -19,7 +19,8 @@ public class FileWriteClient {
 	static Jedis localJedis = LocalRedisUtil.getJedis();
 	
 	public static void main(String[] args) {
-		String dataDir = "/media/ubuntu/mec-data/data-file";
+		//String dataDir = "/media/ubuntu/mec-data/data-file";
+		String dataDir = "C:/Users/zbp/Desktop/mec-data/web-vm/data-file";
 		FileWriteClient.start(dataDir);
 	}
 
@@ -36,8 +37,11 @@ public class FileWriteClient {
 			public int compare(String o1, String o2) {
 				if(o1.length()<o2.length()){
 					return -1;
+				}else if(o1.length()==o2.length()){
+					return o1.compareTo(o2);
+				}else{
+					return 1;
 				}
-				return o1.compareTo(o2);
 			}
 			
 		});
@@ -49,6 +53,7 @@ public class FileWriteClient {
 		//edge ip
 		String cacheIp = "192.168.1.130";
 		for(String n : names){
+			//System.out.println(n);
 			try (BufferedReader br = new BufferedReader(new FileReader(dataDir+File.separator+n))) {
 			    String line;
 			    while ((line = br.readLine()) != null) {
@@ -61,7 +66,7 @@ public class FileWriteClient {
 			    	if(WoR.equals("W")){
 			    		continue;
 			    	}
-			    	
+			    	System.out.println(line);
 			    	String fLongHash = localJedis.get(fileNmae);
 			    	
 			    	MessageDigest md5 = null;

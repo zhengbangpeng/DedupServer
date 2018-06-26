@@ -80,6 +80,7 @@ public class OfflineDedup {
          	    				continue;
          	    			}
          	    			String otherurl = "http://"+otherip+":8080/DedupServer/offline/request";
+         	    			System.out.println("	"+otherurl);
          	    			
          	    			HttpEntity chunkset = MultipartEntityBuilder.create()
              	           			.setMode(HttpMultipartMode.BROWSER_COMPATIBLE)

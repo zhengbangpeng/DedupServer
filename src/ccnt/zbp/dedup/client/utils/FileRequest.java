@@ -70,7 +70,8 @@ public class FileRequest extends HttpServlet {
 		if (WoR.equals("R")) {
 			// read file
 			String metaFilePath = localJedis.get(fShortHash);
-			File file = readFileFromMetaFile(metaFilePath,fileName);
+			readFileFromMetaFile(metaFilePath,fileName);
+			File file = new File(tmpDir+File.separator+fileName);
 
 			// String filePath = "C:/Users/zbp/Desktop/mec-data/test.txt";
 			// File file = new File(filePath);
@@ -182,7 +183,7 @@ public class FileRequest extends HttpServlet {
 
 	}
 
-	private File readFileFromMetaFile(String metaFilePath, String fileName) throws IOException {
+	private void readFileFromMetaFile(String metaFilePath, String fileName) throws IOException {
 		try (BufferedReader br = new BufferedReader(new FileReader(metaFilePath));
 				FileOutputStream fos = new FileOutputStream(tmpDir+File.separator+fileName);
                 BufferedOutputStream mergingStream = new BufferedOutputStream(fos)) {
@@ -206,9 +207,11 @@ public class FileRequest extends HttpServlet {
         	    		mergingStream.write(buffer, 0, bytesRead);
         			}
                 }
-                
+                fos.flush();
+                fos.close();
+                return;
 		}
-		return null;
+		
 	}
 
 	private InputStream readChunkFileFromServer(String ip, String partHash) {

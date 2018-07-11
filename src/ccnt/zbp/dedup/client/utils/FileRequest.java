@@ -88,6 +88,7 @@ public class FileRequest extends HttpServlet {
 			inputStream.close();
 			outStream.flush();
 			outStream.close();
+			file.delete();
 			return;
 		} else {
 			// write file

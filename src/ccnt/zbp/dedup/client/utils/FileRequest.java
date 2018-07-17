@@ -208,11 +208,11 @@ public class FileRequest extends HttpServlet {
         	    		mergingStream.write(buffer, 0, bytesRead);
         			}
                 }
-                fos.flush();
-                fos.close();
-                return;
+                /*fos.flush();
+                fos.close();*/
+                
 		}
-		
+		return;
 	}
 
 	private InputStream readChunkFileFromServer(String ip, String partHash) {

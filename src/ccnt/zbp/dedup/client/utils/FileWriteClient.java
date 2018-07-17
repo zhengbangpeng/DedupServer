@@ -66,7 +66,7 @@ public class FileWriteClient {
 			    	if(WoR.equals("W")){
 			    		continue;
 			    	}
-			    	System.out.println(line);
+			    	//System.out.println(line);
 			    	String fLongHash = localJedis.get(fileNmae);
 			    	
 			    	MessageDigest md5 = null;

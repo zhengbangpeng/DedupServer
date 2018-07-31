@@ -20,6 +20,10 @@
     <servlet-name>OfflineRequest</servlet-name>
     <servlet-class>ccnt.zbp.dedup.client.utils.OfflineRequest</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>CacheRequest</servlet-name>
+    <servlet-class>ccnt.zbp.dedup.client.utils.CacheRequest</servlet-class>
+  </servlet>
 
   <servlet-mapping>
     <servlet-name>UserRequest</servlet-name>
@@ -40,6 +44,10 @@
   <servlet-mapping>
     <servlet-name>OfflineRequest</servlet-name>
     <url-pattern>/offline/request</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>CacheRequest</servlet-name>
+    <url-pattern>/cache/request</url-pattern>
   </servlet-mapping>
 
 </web-app>

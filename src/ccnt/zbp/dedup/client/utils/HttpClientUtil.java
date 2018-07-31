@@ -54,7 +54,54 @@ public class HttpClientUtil {
 		}
 		
 	}
+	public static void doPostCache(String url, String dataDir,
+			String fileNmae, String fileHash, String WoR, long fSize) {
+		if(WoR.equals("R")){
+			doPostR(url,dataDir,fileNmae,fileHash,fSize);
+		}else{
+			doPostW(url,dataDir,fileNmae,fileHash);
+		}
+	}
+	
+	private static String doPostR(String url, String dataDir, String fileName,
+			String fileHash, long fSize) {
+		HttpUriRequest request = RequestBuilder
+                .post(url)
+                .addParameter("WoR", "R")
+                .addParameter("fileName",fileName)
+                .addParameter("fileHash",fileHash)
+                .addParameter("fSize", String.valueOf(fSize))
+                .build();
 
+	    HttpClient client = HttpClientBuilder.create().build();
+	    HttpResponse response = null;
+		try {
+			response = client.execute(request);
+			
+			HttpEntity entity = response.getEntity();
+			InputStream in = entity.getContent();
+	    	//FileOutputStream out = new FileOutputStream(new File("C:/Users/zbp/Desktop/mec-data/copy.txt"));
+	    	FileOutputStream out = new FileOutputStream(tmpDir+File.separator+fileName);
+	    	BufferedOutputStream buff = new BufferedOutputStream(out);
+	    	
+	    	byte[] buffer = new byte[8*1024];
+	    	int bytesRead = -1;
+	    	while ((bytesRead = in.read(buffer)) != -1) {
+				buff.write(buffer, 0, bytesRead);
+			}
+	    	buff.flush();
+	    	buff.close();
+	    	out.close();
+	    	
+	    	File tmp = new File(tmpDir+File.separator+fileName);
+	    	tmp.delete();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+        return response.toString();
+		
+	}
 	public static String doPostR(String url,String dataDir, String fileName, String fileHash) {
 		
 	    HttpUriRequest request = RequestBuilder
@@ -361,6 +408,8 @@ public class HttpClientUtil {
 		long end = System.nanoTime();
 		System.out.println((end-start)/100.0/1000000.0);
 	}
+
+	
 
 	
 }

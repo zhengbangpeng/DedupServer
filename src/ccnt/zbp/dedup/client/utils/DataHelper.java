@@ -25,13 +25,25 @@ public class DataHelper {
 	public static Set<String> ChangedSet = ConcurrentHashMap.newKeySet();
 	
 	//param size
-	//public static Map<String, String> fileCache = new FileLRU<>(5);
+	//file size 8 = 4k
+	//4G = 4 * 1024 * 1024 * 2 = 8388608
+	public static FileLRU fileCache = new FileLRU(8388608);
 	
 	//param size
 	//public static Map<String, String> metaCache = new MetaLRU<>(5);
-
+	
 	public static Set<String> getFileSet() {
 		return FileSet;
+	}
+
+
+	public static FileLRU getFileCache() {
+		return fileCache;
+	}
+
+
+	public static void setFileCache(FileLRU fileCache) {
+		DataHelper.fileCache = fileCache;
 	}
 
 

@@ -39,7 +39,7 @@ public class FileLRU {
         caches.put(fileHash, node);
     }
 
-    public Object get(String fielHash){
+    public CacheNode get(String fielHash){
         CacheNode node = caches.get(fielHash);
         if(node == null){
             return null;
@@ -132,7 +132,7 @@ public class FileLRU {
         return sb.toString();
     }
 
-    class CacheNode{
+    public class CacheNode{
         CacheNode pre;
         CacheNode next;
         String fileHash;

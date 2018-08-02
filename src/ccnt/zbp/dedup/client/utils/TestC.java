@@ -30,7 +30,13 @@ public class TestC {
 		
 		/*String str = "abcdef";
 		System.out.println(str.substring(0,3));*/
-		System.out.println(Math.random());
+//		System.out.println(Math.random());
+//		String test = "aaa";
+//		System.out.println(test.getBytes().length);
+		long size=8;
+		if(size==8){
+			System.out.println("equal");
+		}
 	}
 
 }

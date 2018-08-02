@@ -14,13 +14,13 @@ import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 import redis.clients.jedis.Jedis;
 
-public class FileAll_FileLRUClient {
+public class FileAll_MetaLRUClient {
 	
 	static Jedis localJedis = LocalRedisUtil.getJedis();
 	
 	public static void main(String[] args) {
 		String dataDir = "/media/ubuntu/mec-data/data-file";
-		FileAll_FileLRUClient.start(dataDir);
+		FileAll_MetaLRUClient.start(dataDir);
 	}
 
 	private static void start(String dataDir) {
@@ -92,7 +92,7 @@ public class FileAll_FileLRUClient {
 				    		long now = (System.nanoTime()-start)*84;
 				    		if(now > timestamp){
 				    			long requestStart = System.nanoTime();
-				    			HttpClientUtil.doPostCache("http://"+cacheIp+":8080/DedupServer/cache_filelru/request", dataDir, fileNmae,fShortHash,"R",fSize);
+				    			HttpClientUtil.doPostCache("http://"+cacheIp+":8080/DedupServer/cache_metalru/request", dataDir, fileNmae,fShortHash,"R",fSize);
 				    			// time ns -> ms
 				    			double requestTime = (System.nanoTime()-requestStart)/1000000.0;
 				    			System.out.println("finish time: "+String.format("%.1f", requestTime)+" sendRequest: "+line);

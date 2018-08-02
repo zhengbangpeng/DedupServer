@@ -188,28 +188,29 @@ public class FileRequest extends HttpServlet {
 		try (BufferedReader br = new BufferedReader(new FileReader(metaFilePath));
 				FileOutputStream fos = new FileOutputStream(tmpDir+File.separator+fileName);
                 BufferedOutputStream mergingStream = new BufferedOutputStream(fos)) {
-			
-                String line = br.readLine();
-                //String[] array = line.split(" ");
-                //String partHash = array[0];
-                String partHash = line;
-                //String partServerId = array[1];
-                String partServerId = chunkJedis.get(partHash);
-                if(partServerId.equals(serverId)){
-                	Files.copy(Paths.get(chunkDir+File.separator+partHash.substring(0, 3)+File.separator+partHash), mergingStream);
-                }else{
-                	String ip = ips[Integer.parseInt(partServerId)];
-                	InputStream in = readChunkFileFromServer(ip,partHash);
-                	
-                	//write chunk
-                	byte[] buffer = new byte[1024*4];
-        	    	int bytesRead = -1;
-        	    	while ((bytesRead = in.read(buffer)) != -1) {
-        	    		mergingStream.write(buffer, 0, bytesRead);
-        			}
-                }
-                /*fos.flush();
-                fos.close();*/
+				String line = null;
+				while((line = br.readLine()) != null){
+		            //String[] array = line.split(" ");
+		            //String partHash = array[0];
+		            String partHash = line;
+		            //String partServerId = array[1];
+		            String partServerId = chunkJedis.get(partHash);
+		            if(partServerId.equals(serverId)){
+		            	Files.copy(Paths.get(chunkDir+File.separator+partHash.substring(0, 3)+File.separator+partHash), mergingStream);
+		            }else{
+		            	String ip = ips[Integer.parseInt(partServerId)];
+		            	InputStream in = readChunkFileFromServer(ip,partHash);
+		            	
+		            	//write chunk
+		            	byte[] buffer = new byte[1024*4];
+		    	    	int bytesRead = -1;
+		    	    	while ((bytesRead = in.read(buffer)) != -1) {
+		    	    		mergingStream.write(buffer, 0, bytesRead);
+		    			}
+		            }
+		            /*fos.flush();
+		            fos.close();*/
+				}
                 
 		}
 		return;

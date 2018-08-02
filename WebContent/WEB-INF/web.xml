@@ -24,6 +24,14 @@
     <servlet-name>CacheRequest</servlet-name>
     <servlet-class>ccnt.zbp.dedup.client.utils.CacheRequest</servlet-class>
   </servlet>
+  <servlet>
+    <servlet-name>MetaLRURequest</servlet-name>
+    <servlet-class>ccnt.zbp.dedup.client.utils.MetaLRURequest</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>MetaRequest</servlet-name>
+    <servlet-class>ccnt.zbp.dedup.client.utils.MetaRequest</servlet-class>
+  </servlet>
 
   <servlet-mapping>
     <servlet-name>UserRequest</servlet-name>
@@ -48,6 +56,14 @@
   <servlet-mapping>
     <servlet-name>CacheRequest</servlet-name>
     <url-pattern>/cache/request</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>MetaLRURequest</servlet-name>
+    <url-pattern>/cache_metalru/request</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>MetaRequest</servlet-name>
+    <url-pattern>/meta/getmeta</url-pattern>
   </servlet-mapping>
 
 </web-app>

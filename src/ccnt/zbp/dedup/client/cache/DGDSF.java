@@ -8,7 +8,7 @@ import java.util.Set;
 import ccnt.zbp.dedup.client.utils.DataHelper;
 
 
-public class MetaLRU {
+public class DGDSF {
 
     private long currentCacheSize;
     private long CacheCapcity;
@@ -18,7 +18,7 @@ public class MetaLRU {
     
     
 
-    public MetaLRU(long size){
+    public DGDSF(long size){
         currentCacheSize = 0;
         this.CacheCapcity = size;
         caches = new HashMap<String,CacheNode>((int)(size*3/32));

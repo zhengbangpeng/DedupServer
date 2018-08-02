@@ -6,15 +6,18 @@ import java.nio.file.Paths;
 
 import redis.clients.jedis.Jedis;
 
-public class DataProcess {
+public class MetaCacheProcess {
 	
 	public static long count = 0;
 
 	public static void main(String[] args) {
-//		String dataDir = "/media/ubuntu/mec-data";
-		String dataDir = "C:/Users/zbp/Desktop/mec-data/web-vm";
+		String dataDir = "/media/ubuntu/mec-data";
+//		String dataDir = "C:/Users/zbp/Desktop/mec-data/web-vm/data-file";
 		//DataProcess.extractFileTrace(dataDir);
-		DataProcess.createAllFile(dataDir);
+		MetaCacheProcess.initCacheDir(dataDir);
+	}
+	private static void initCacheDir(String dataDir) {
+		init(dataDir);
 	}
 	private static void createAllFile(String dataDir) {
 		init(dataDir);
@@ -54,15 +57,17 @@ public class DataProcess {
 	}
 	//生成1000个文件夹 000-999
 	private static void init(String dataDir) {
+char[] carray = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};
+		
 		File dir = new File(dataDir);
-		File filestoreDir = new File(dir+File.separator+"filestore");
-		if(!filestoreDir.exists()){
-			filestoreDir.mkdir();
+		File chunkstoreDir = new File(dir+File.separator+"metacache");
+		if(!chunkstoreDir.exists()){
+			chunkstoreDir.mkdir();
 		}
-		for(int i=0; i<10; i++){
-			for(int j=0; j<10; j++){
-				for(int k=0; k<10; k++){
-					File newDir = new File(filestoreDir.getAbsolutePath()+File.separator+i+j+k);
+		for(int i=0; i<36; i++){
+			for(int j=0; j<36; j++){
+				for(int k=0; k<36; k++){
+					File newDir = new File(chunkstoreDir.getAbsolutePath()+File.separator+carray[i]+carray[j]+carray[k]);
 					if(!newDir.exists()){
 						newDir.mkdir();
 					}

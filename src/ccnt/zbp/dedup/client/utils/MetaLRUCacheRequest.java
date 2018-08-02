@@ -144,6 +144,7 @@ public class MetaLRUCacheRequest extends HttpServlet {
     		List<Future<String>> futureList = new ArrayList<Future<String>>();
     		
     		while((line = br.readLine()) != null){
+    			System.out.println(line);
     			String[] array = line.split(" ");
     			String partHash = array[0];
                 String partServerId = array[1];
@@ -168,7 +169,7 @@ public class MetaLRUCacheRequest extends HttpServlet {
         return new Callable<String>() {
             @Override
             public String call() throws Exception {
-            	String url = "http://"+partServerId+":8080/DedupServer/chunk/request";
+            	String url = "http://"+ips[Integer.valueOf(partServerId)]+":8080/DedupServer/chunk/request";
                 
                 HttpUriRequest cRequest = RequestBuilder
                         .post(url)
@@ -183,7 +184,7 @@ public class MetaLRUCacheRequest extends HttpServlet {
         			mStream = cResponse.getEntity().getContent();
         		} catch (Exception e) {
         			e.printStackTrace();
-        		} 
+        		}
                 return IOUtils.toString(mStream);
             }
         };

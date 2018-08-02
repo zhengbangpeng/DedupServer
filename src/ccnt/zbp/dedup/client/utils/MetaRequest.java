@@ -58,13 +58,14 @@ public class MetaRequest extends HttpServlet {
     	
     	String fShortHash = request.getParameter("fileHash");
     	String metaFilePath = localJedis.get(fShortHash);
+    	System.out.println("metaFilePth:"+metaFilePath);
     	OutputStream out = response.getOutputStream();
     	
     	try (BufferedReader br = new BufferedReader(new FileReader(metaFilePath))){
     		String line = null;
     		while((line = br.readLine()) != null){
     			String partServerId = chunkJedis.get(line);
-    			String nextLine = line+" "+ newLine;
+    			String nextLine = line+" "+partServerId+ newLine;
     			out.write(nextLine.getBytes());
         	}
     	}

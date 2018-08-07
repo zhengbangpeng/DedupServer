@@ -155,11 +155,14 @@ public class MetaLRUCacheRequest extends HttpServlet {
     		}
     		service.shutdown();
     		
-    		OutputStream outs = response.getOutputStream();
+    		ByteArrayOutputStream baos = new ByteArrayOutputStream();
     		
     		ExecutorService s = Executors.newSingleThreadExecutor();
-            s.execute(getCollectJob(futureList,outs));
+            s.execute(getCollectJob(futureList,baos));
             s.shutdown();
+            
+            OutputStream outs = response.getOutputStream();
+            outs.write(baos.toByteArray());
 	    	
 	    	outs.flush();
 	    	outs.close();

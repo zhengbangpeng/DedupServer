@@ -9,16 +9,17 @@ import ccnt.zbp.dedup.client.utils.DataHelper;
 
 
 public class DGDSF {
-
-    private long currentCacheSize;
     private long CacheCapcity;
-    private HashMap<String,CacheNode> caches;
+    private long metaCacheSize;
+    private long currentMetaCacheSize;
+    private long fileCacheSize;
+    private long currentFileCacheSize;
+    private HashMap<String,CacheNode> metaCaches;
+    private HashMap<String,CacheNode> fileCaches;
     private CacheNode first;
     private CacheNode last;
     
-    
-
-    public DGDSF(long size){
+   /* public DGDSF(long size){
         currentCacheSize = 0;
         this.CacheCapcity = size;
         caches = new HashMap<String,CacheNode>((int)(size*3/32));
@@ -130,7 +131,7 @@ public class DGDSF {
         }
 
         return sb.toString();
-    }
+    }*/
 
     public class CacheNode{
         CacheNode pre;

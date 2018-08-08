@@ -38,6 +38,8 @@ public final class RedisUtil {
     //在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的；
     private static boolean TEST_ON_BORROW = true;
     
+    private static boolean Test_While_Idle = true;
+    
     private static JedisPool jedisPool = null;
     
     /**
@@ -49,6 +51,7 @@ public final class RedisUtil {
             config.setMaxIdle(MAX_IDLE);
             config.setMaxWaitMillis(MAX_WAIT);
             config.setTestOnBorrow(TEST_ON_BORROW);
+            config.setTestWhileIdle(Test_While_Idle);
             jedisPool = new JedisPool(config, ADDR, PORT, TIMEOUT, AUTH);
         } catch (Exception e) {
             e.printStackTrace();

@@ -31,7 +31,8 @@ public final class LocalRedisUtil {
     private static int MAX_IDLE = 200;
     
     //等待可用连接的最大时间，单位毫秒，默认值为-1，表示永不超时。如果超过等待时间，则直接抛出JedisConnectionException；
-    private static int MAX_WAIT = 10000;
+    //private static int MAX_WAIT = 10000;
+    private static int MAX_WAIT = -1;
     
     private static int TIMEOUT = 10000;
     

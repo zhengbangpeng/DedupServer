@@ -34,7 +34,7 @@ public final class ChunkRedisUtil {
     //private static int MAX_WAIT = 10000;
     private static int MAX_WAIT = -1;
     
-    private static int TIMEOUT = 0;
+    private static int TIMEOUT = -1;
     
     //在borrow一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的；
     private static boolean TEST_ON_BORROW = true;

@@ -48,7 +48,7 @@ public class FileAll_MetaLRUClient {
 		//servier ips
 		//String[] ips = new String[]{"192.168.1.131","192.168.1.132","192.168.1.144"};
 		//coordinator ip
-		String serverIp = "192.168.1.65";
+		String serverIp = "192.168.1.93";
 		//edge ip
 		String cacheIp = "192.168.1.130";
 		for(String n : names){

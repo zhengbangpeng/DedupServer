@@ -16,8 +16,6 @@ import redis.clients.jedis.Jedis;
 
 public class FileAll_FileLRUClient {
 	
-	static Jedis localJedis = LocalRedisUtil.getJedis();
-	
 	public static void main(String[] args) {
 		String dataDir = "/media/ubuntu/mec-data/data-file";
 		FileAll_FileLRUClient.start(dataDir);
@@ -61,7 +59,9 @@ public class FileAll_FileLRUClient {
 			    	long fSize = Long.parseLong(row[1]);
 			    	String WoR = row[2];
 			    	
+			    	Jedis localJedis = LocalRedisUtil.getJedis();
 			    	String fLongHash = localJedis.get(fileNmae);
+			    	LocalRedisUtil.returnResource(localJedis);
 			    	
 			    	MessageDigest md5 = null;
 					try {

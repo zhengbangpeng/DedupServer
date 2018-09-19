@@ -31,8 +31,6 @@ public class OfflineDedup {
 	
 	static String[] ips = DataHelper.getServerIps();
 	
-	//static Jedis localJedis = LocalRedisUtil.getJedis();
-	
 	public static void main(String[] args) {
 		TimerTask task = new TimerTask() {
             @Override

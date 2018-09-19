@@ -38,10 +38,7 @@ public class MetaRequest extends HttpServlet {
 	static String dataDir = "/media/ubuntu/mec-data";
 	static String[] ips = DataHelper.getServerIps();
 	static String chunkDir = "/media/ubuntu/mec-data/chunkstore";
-	static Jedis chunkJedis = ChunkRedisUtil.getJedis();
-	static Jedis localJedis = LocalRedisUtil.getJedis();
 	static String newLine = System.getProperty("line.separator");
-	//static Jedis jedis = RedisUtil.getJedis();
 	public MetaRequest() {
         super();
     }
@@ -57,14 +54,18 @@ public class MetaRequest extends HttpServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
     	
     	String fShortHash = request.getParameter("fileHash");
+    	Jedis localJedis = LocalRedisUtil.getJedis();
     	String metaFilePath = localJedis.get(fShortHash);
+    	LocalRedisUtil.returnResource(localJedis);
     	System.out.println("metaFilePth:"+metaFilePath);
     	OutputStream out = response.getOutputStream();
     	
     	try (BufferedReader br = new BufferedReader(new FileReader(metaFilePath))){
     		String line = null;
     		while((line = br.readLine()) != null){
+    			Jedis chunkJedis = ChunkRedisUtil.getJedis();
     			String partServerId = chunkJedis.get(line);
+    			ChunkRedisUtil.returnResource(chunkJedis);
     			String nextLine = line+" "+partServerId+ newLine;
     			out.write(nextLine.getBytes());
         	}

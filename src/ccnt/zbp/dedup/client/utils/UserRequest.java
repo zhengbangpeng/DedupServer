@@ -37,7 +37,6 @@ import redis.clients.jedis.Jedis;
 public class UserRequest extends HttpServlet {
 	static String dataDir = "/media/ubuntu/mec-data";
 	static String[] ips = DataHelper.getServerIps();
-	//static Jedis jedis = RedisUtil.getJedis();
 	public UserRequest() {
         super();
     }

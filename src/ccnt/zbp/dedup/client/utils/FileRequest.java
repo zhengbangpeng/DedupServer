@@ -34,9 +34,6 @@ import redis.clients.jedis.Jedis;
 public class FileRequest extends HttpServlet {
 	static String dataDir = "/media/ubuntu/mec-data";
 	static String chunkDir = "/media/ubuntu/mec-data/chunkstore";
-	static Jedis remoteJedis = RedisUtil.getJedis();
-	static Jedis localJedis = LocalRedisUtil.getJedis();
-	static Jedis chunkJedis = ChunkRedisUtil.getJedis();
 	
 	//serviceId 0 1 2
 	static String[] ips = DataHelper.getServerIps();
@@ -69,7 +66,10 @@ public class FileRequest extends HttpServlet {
 		String fShortHash = request.getParameter("fileHash");
 		if (WoR.equals("R")) {
 			// read file
+			Jedis localJedis = LocalRedisUtil.getJedis();
 			String metaFilePath = localJedis.get(fShortHash);
+			LocalRedisUtil.returnResource(localJedis);
+			
 			readFileFromMetaFile(metaFilePath,fileName);
 			File file = new File(tmpDir+File.separator+fileName);
 
@@ -109,7 +109,9 @@ public class FileRequest extends HttpServlet {
 			}
 
 			// get file hash from remote jedis
+			Jedis remoteJedis = RedisUtil.getJedis();
 			String fLongHash = remoteJedis.get(fileName);
+			RedisUtil.returnResource(remoteJedis);
 
 /*			MessageDigest md5 = null;
 			try {
@@ -122,6 +124,7 @@ public class FileRequest extends HttpServlet {
 			
 			// compare with local jedis
 			// if file exist
+			Jedis localJedis = LocalRedisUtil.getJedis();
 			if (localJedis.exists(fShortHash)) {
 				return;
 				/*String existfilePath = localJedis.get(fShortHash);
@@ -135,6 +138,7 @@ public class FileRequest extends HttpServlet {
 				localJedis.set(fileName, metaFilePath);
 				localJedis.set(fShortHash, metaFilePath);
 			}
+			LocalRedisUtil.returnResource(localJedis);
 		}
 	}
 
@@ -158,6 +162,7 @@ public class FileRequest extends HttpServlet {
 				String partHash = chunkHash[partCounter];
 				partCounter++;
 				// if chunk exists
+				Jedis chunkJedis = ChunkRedisUtil.getJedis();
 				if(chunkJedis.exists(partHash)) {
 					//mout.write((partHash+" "+serverId).getBytes());
 					mout.write((partHash).getBytes());
@@ -179,6 +184,7 @@ public class FileRequest extends HttpServlet {
 						out.write(buffer, 0, bytesAmount);
 					}
 				}
+				ChunkRedisUtil.returnResource(chunkJedis);
 			}
 		}
 
@@ -194,7 +200,10 @@ public class FileRequest extends HttpServlet {
 		            //String partHash = array[0];
 		            String partHash = line;
 		            //String partServerId = array[1];
+		            Jedis chunkJedis = ChunkRedisUtil.getJedis();
 		            String partServerId = chunkJedis.get(partHash);
+		            ChunkRedisUtil.returnResource(chunkJedis);
+		            
 		            if(partServerId.equals(serverId)){
 		            	Files.copy(Paths.get(chunkDir+File.separator+partHash.substring(0, 3)+File.separator+partHash), mergingStream);
 		            }else{

@@ -38,8 +38,6 @@ public class ChunkRequest extends HttpServlet {
 	static String dataDir = "/media/ubuntu/mec-data";
 	static String[] ips = DataHelper.getServerIps();
 	static String chunkDir = "/media/ubuntu/mec-data/chunkstore";
-	static Jedis chunkJedis = ChunkRedisUtil.getJedis();
-	//static Jedis jedis = RedisUtil.getJedis();
 	public ChunkRequest() {
         super();
     }

@@ -34,9 +34,6 @@ import redis.clients.jedis.Jedis;
 public class OfflineRequest extends HttpServlet {
 	static String dataDir = "/media/ubuntu/mec-data";
 	static String chunkDir = "/media/ubuntu/mec-data/chunkstore";
-	static Jedis remoteJedis = RedisUtil.getJedis();
-	static Jedis localJedis = LocalRedisUtil.getJedis();
-	static Jedis chunkJedis = ChunkRedisUtil.getJedis();
 	
 	//serviceId 0 1 2
 	static String[] ips = DataHelper.getServerIps();
@@ -72,12 +69,14 @@ public class OfflineRequest extends HttpServlet {
 //				pw.write(chunk+" "+chunkJedis.get(chunk));
 //				pw.write(newLine);
 //			}
+			Jedis chunkJedis = ChunkRedisUtil.getJedis();
 			while(it.hasNext()){
 				String chunk = it.next();
 				pw.write(chunk+" "+chunkJedis.get(chunk));
 				pw.write(newLine);
 				it.remove();
 			}
+			ChunkRedisUtil.returnResource(chunkJedis);
 			pw.flush();
 //			set.clear();
 			return;
@@ -94,6 +93,7 @@ public class OfflineRequest extends HttpServlet {
 				String[] array = line.split(" ");
 				String chunkHash = array[0];
 				String chunkRemoteServerId = array[1];
+				Jedis chunkJedis = ChunkRedisUtil.getJedis();
 				if(chunkJedis.exists(chunkHash)){
 					String chunkLocalServerId = chunkJedis.get(chunkHash);
 					if(chunkRemoteServerId.equals(chunkLocalServerId)){
@@ -107,6 +107,7 @@ public class OfflineRequest extends HttpServlet {
 						pw.write(newLine);
 					}
 				}
+				ChunkRedisUtil.returnResource(chunkJedis);
 				
 			}
 			pw.flush();
@@ -121,10 +122,12 @@ public class OfflineRequest extends HttpServlet {
 				String[] array = line.split(" ");
 				String chunkHash = array[0];
 				String chunkNewServerId = array[1];
+				Jedis chunkJedis = ChunkRedisUtil.getJedis();
 				if(chunkJedis.exists(chunkHash)){
 					chunkJedis.set(chunkHash, chunkNewServerId);
 					DataHelper.getChangedSet().add(chunkHash);
 				}
+				ChunkRedisUtil.returnResource(chunkJedis);
 			}
 			
 		}

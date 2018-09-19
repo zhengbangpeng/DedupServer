@@ -45,7 +45,6 @@ public class MetaLRUCacheRequest extends HttpServlet {
 	static String cacheDir = "/media/ubuntu/fileCache";
 	static String[] ips = DataHelper.getServerIps();
 	static String serverIp = DataHelper.getCoordinatorIp();
-	//static Jedis jedis = RedisUtil.getJedis();
 	public MetaLRUCacheRequest() {
         super();
     }

@@ -16,8 +16,6 @@ import redis.clients.jedis.Jedis;
 
 public class FileWriteClient {
 	
-	static Jedis localJedis = LocalRedisUtil.getJedis();
-	
 	public static void main(String[] args) {
 		//String dataDir = "/media/ubuntu/mec-data/data-file";
 		String dataDir = "C:/Users/zbp/Desktop/mec-data/web-vm/data-file";
@@ -66,7 +64,9 @@ public class FileWriteClient {
 			    		continue;
 			    	}
 			    	//System.out.println(line);
+			    	Jedis localJedis = LocalRedisUtil.getJedis();
 			    	String fLongHash = localJedis.get(fileNmae);
+			    	LocalRedisUtil.returnResource(localJedis);
 			    	
 			    	MessageDigest md5 = null;
 					try {

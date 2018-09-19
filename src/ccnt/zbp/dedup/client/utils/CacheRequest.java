@@ -38,9 +38,8 @@ import redis.clients.jedis.Jedis;
 public class CacheRequest extends HttpServlet {
 	static String dataDir = "/media/ubuntu/mec-data";
 	static String cacheDir = "/media/ubuntu/fileCache";
-	static String[] ips = new String[]{"192.168.1.131","192.168.1.132","192.168.1.144"};
-	static String serverIp = "192.168.1.65";
-	//static Jedis jedis = RedisUtil.getJedis();
+	static String[] ips = DataHelper.getServerIps();
+	static String serverIp = DataHelper.getCoordinatorIp();
 	public CacheRequest() {
         super();
     }

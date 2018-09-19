@@ -36,7 +36,7 @@ import redis.clients.jedis.Jedis;
 @MultipartConfig
 public class MetaRequest extends HttpServlet {
 	static String dataDir = "/media/ubuntu/mec-data";
-	static String[] ips = new String[]{"192.168.1.131","192.168.1.132","192.168.1.144"};
+	static String[] ips = DataHelper.getServerIps();
 	static String chunkDir = "/media/ubuntu/mec-data/chunkstore";
 	static Jedis chunkJedis = ChunkRedisUtil.getJedis();
 	static Jedis localJedis = LocalRedisUtil.getJedis();

@@ -46,11 +46,10 @@ public class FileAll_FileLRUClient {
 		});
 		long start = System.nanoTime();
 		//servier ips
-		//String[] ips = new String[]{"192.168.1.131","192.168.1.132","192.168.1.144"};
 		//coordinator ip
-		String serverIp = "192.168.1.65";
+		String serverIp = DataHelper.getCoordinatorIp();
 		//edge ip
-		String cacheIp = "192.168.1.130";
+		String cacheIp = DataHelper.getEdgeIp();
 		for(String n : names){
 			try (BufferedReader br = new BufferedReader(new FileReader(dataDir+File.separator+n))) {
 			    String line;

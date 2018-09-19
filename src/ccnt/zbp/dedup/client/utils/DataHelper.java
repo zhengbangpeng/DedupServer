@@ -11,6 +11,11 @@ public class DataHelper {
 	
 	static String dataDir = "/media/ubuntu/mec-data";
 	
+	static String edgeIp = "192.168.1.130";
+	static String[] serverIps = {"192.168.1.131","192.168.1.132","192.168.1.144"};
+	static String remoteIp = "192.168.1.91";
+	static String coordinatorIp = "192.168.1.93";
+	
 	//public static Set<String> FileSet = Collections.synchronizedSet(new HashSet<String>());
 	public static Set<String> FileSet = ConcurrentHashMap.newKeySet();
 	
@@ -99,4 +104,26 @@ public class DataHelper {
 		ChunkSet.clear();
 		System.out.println(ChunkSet);
 	}
+
+
+	public static String getEdgeIp() {
+		return edgeIp;
+	}
+
+
+	public static String[] getServerIps() {
+		return serverIps;
+	}
+
+
+	public static String getRemoteIp() {
+		return remoteIp;
+	}
+
+
+	public static String getCoordinatorIp() {
+		return coordinatorIp;
+	}
+	
+	
 }

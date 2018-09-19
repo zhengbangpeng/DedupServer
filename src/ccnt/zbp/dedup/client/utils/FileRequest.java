@@ -39,7 +39,7 @@ public class FileRequest extends HttpServlet {
 	static Jedis chunkJedis = ChunkRedisUtil.getJedis();
 	
 	//serviceId 0 1 2
-	static String[] ips = new String[]{"192.168.1.131","192.168.1.132","192.168.1.144"};
+	static String[] ips = DataHelper.getServerIps();
 	
 	static String tmpDir = "/media/ubuntu/tmp";
 	

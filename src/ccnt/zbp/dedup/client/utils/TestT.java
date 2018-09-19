@@ -29,7 +29,7 @@ public class TestT {
 	public  static void main(String[] args) throws Exception {
 		
 		String fileName = "021";
-		String url = "http://192.168.1.65:8080/DedupServer/user/request";
+		String url = "http://"+DataHelper.getRemoteIp()+":8080/DedupServer/user/request";
 		String fileHash = "021test021";
 		//String filePath = "C:/Users/zbp/Desktop/source-archive.zip"; 
 		String filePath = "C:/Users/zbp/Desktop/tmp.txt"; 

@@ -39,12 +39,12 @@ public class OfflineRequest extends HttpServlet {
 	static Jedis chunkJedis = ChunkRedisUtil.getJedis();
 	
 	//serviceId 0 1 2
-	static String[] ips = new String[]{"192.168.1.131","192.168.1.132","192.168.1.144"};
+	static String[] ips = DataHelper.getServerIps();
 	
 	static String tmpDir = "/media/ubuntu/tmp";
 	
 	static String newLine = System.getProperty("line.separator");
-	static String serverId = "0";
+	//static String serverId = "0";
 
 	public OfflineRequest() {
 		super();

@@ -126,6 +126,7 @@ public class FileRequest extends HttpServlet {
 			// if file exist
 			Jedis localJedis = LocalRedisUtil.getJedis();
 			if (localJedis.exists(fShortHash)) {
+				LocalRedisUtil.returnResource(localJedis);
 				return;
 				/*String existfilePath = localJedis.get(fShortHash);
 				localJedis.set(fileName, existfilePath);*/
@@ -137,8 +138,9 @@ public class FileRequest extends HttpServlet {
 				dedupFileByChunk(part, metaFilePath,fLongHash);
 				localJedis.set(fileName, metaFilePath);
 				localJedis.set(fShortHash, metaFilePath);
+				LocalRedisUtil.returnResource(localJedis);
 			}
-			LocalRedisUtil.returnResource(localJedis);
+			
 		}
 	}
 
@@ -157,12 +159,12 @@ public class FileRequest extends HttpServlet {
 		try (BufferedInputStream bis = new BufferedInputStream(part.getInputStream())) {
 
 			int bytesAmount = 0;
+			Jedis chunkJedis = ChunkRedisUtil.getJedis();
 			while ((bytesAmount = bis.read(buffer)) > 0) {
 				//partName = partHash (32 Bytes)
 				String partHash = chunkHash[partCounter];
 				partCounter++;
 				// if chunk exists
-				Jedis chunkJedis = ChunkRedisUtil.getJedis();
 				if(chunkJedis.exists(partHash)) {
 					//mout.write((partHash+" "+serverId).getBytes());
 					mout.write((partHash).getBytes());
@@ -184,8 +186,8 @@ public class FileRequest extends HttpServlet {
 						out.write(buffer, 0, bytesAmount);
 					}
 				}
-				ChunkRedisUtil.returnResource(chunkJedis);
 			}
+			ChunkRedisUtil.returnResource(chunkJedis);
 		}
 
 	}

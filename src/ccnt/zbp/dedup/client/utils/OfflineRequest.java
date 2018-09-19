@@ -89,11 +89,12 @@ public class OfflineRequest extends HttpServlet {
 			InputStream is = part.getInputStream();
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
 			String line = null;
+			Jedis chunkJedis = ChunkRedisUtil.getJedis();
 			while((line=br.readLine())!=null){
 				String[] array = line.split(" ");
 				String chunkHash = array[0];
 				String chunkRemoteServerId = array[1];
-				Jedis chunkJedis = ChunkRedisUtil.getJedis();
+				
 				if(chunkJedis.exists(chunkHash)){
 					String chunkLocalServerId = chunkJedis.get(chunkHash);
 					if(chunkRemoteServerId.equals(chunkLocalServerId)){
@@ -107,9 +108,8 @@ public class OfflineRequest extends HttpServlet {
 						pw.write(newLine);
 					}
 				}
-				ChunkRedisUtil.returnResource(chunkJedis);
-				
 			}
+			ChunkRedisUtil.returnResource(chunkJedis);
 			pw.flush();
 			return;
 		}else if(method.equals("updatechunk")){
